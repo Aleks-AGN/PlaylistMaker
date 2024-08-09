@@ -6,7 +6,7 @@
     <dimen name="medium_padding_1">12dp</dimen>
     <dimen name="medium_padding_2">16dp</dimen>
     <dimen name="big_padding_1">20dp</dimen>
-    <dimen name="big_padding_2">21dp</dimen>
+    <dimen name="big_padding_2">24dp</dimen>
     <dimen name="title_text_size">22sp</dimen>
     <dimen name="menu_text_size">16sp</dimen>
     <dimen name="btn_text_size">22sp</dimen>

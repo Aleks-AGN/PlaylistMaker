@@ -1,117 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    android:paddingTop="@dimen/medium_padding_1"
-    android:paddingLeft="@dimen/medium_padding_2"
-    android:paddingRight="@dimen/medium_padding_2"
     android:paddingBottom="@dimen/big_padding_1">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/settings_toolbar"
+        app:titleTextAppearance="@style/SettingsToolbar.Title"
+        style="@style/SettingsToolbar" />
 
-        <ImageView
-            android:id="@+id/btn_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:src="@drawable/ic_arrow_back" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="48dp"
-            android:text="@string/settings"
-            android:textColor="@color/blue_dark"
-            android:textSize="@dimen/title_text_size"/>
-    </FrameLayout>
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/theme_switcher"
+        android:text="@string/dark_theme"
+        android:thumbTintMode="screen"
+        style="@style/Switch" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/big_padding_2"
-        android:paddingBottom="@dimen/big_padding_2">
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_share"
+        android:text="@string/share_app"
+        android:drawableEnd="@drawable/ic_share"
+        style="@style/TextView" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:text="@string/dark_theme"
-            android:textColor="@color/black"
-            android:textSize="@dimen/menu_text_size" />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_support"
+        android:text="@string/write_to_support"
+        android:drawableEnd="@drawable/ic_support"
+        style="@style/TextView" />
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"/>
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/big_padding_2"
-        android:paddingBottom="@dimen/big_padding_2">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:text="@string/share_app"
-            android:textColor="@color/black"
-            android:textSize="@dimen/menu_text_size" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_share"
-            android:layout_gravity="end"/>
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/big_padding_2"
-        android:paddingBottom="@dimen/big_padding_2">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:text="@string/write_to_support"
-            android:textColor="@color/black"
-            android:textSize="@dimen/menu_text_size" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_support"
-            android:layout_gravity="end"/>
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/big_padding_2"
-        android:paddingBottom="@dimen/big_padding_2">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:text="@string/terms_of_use"
-            android:textColor="@color/black"
-            android:textSize="@dimen/menu_text_size" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_forward"
-            android:layout_gravity="end"/>
-    </FrameLayout>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_terms"
+        android:text="@string/terms_of_use"
+        android:drawableEnd="@drawable/ic_arrow_forward"
+        style="@style/TextView" />
 
 </LinearLayout>
