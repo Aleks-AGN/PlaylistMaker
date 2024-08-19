@@ -8,18 +8,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/blue"
-    android:paddingHorizontal="@dimen/medium_padding_2"
-    android:paddingTop="@dimen/medium_padding_1"
-    android:paddingBottom="@dimen/big_padding_1">
+    android:background="?attr/colorPrimaryVariant"
+    android:paddingBottom="@dimen/big_padding_1"
+    android:theme="@style/Theme.PlaylistMaker">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="@string/title"
-        android:textColor="@color/white"
-        android:textSize="@dimen/title_text_size" />
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/main_toolbar"
+        app:titleTextAppearance="@style/MainToolbar.Title"
+        style="@style/MainToolbar" />
 
     <Button
         android:id="@+id/btn_search"

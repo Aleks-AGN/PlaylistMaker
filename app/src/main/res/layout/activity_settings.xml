@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:paddingBottom="@dimen/big_padding_1">
+    android:background="?attr/colorSecondaryVariant"
+    android:paddingBottom="@dimen/big_padding_1"
+    android:theme="@style/Theme.PlaylistMaker">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/settings_toolbar"
