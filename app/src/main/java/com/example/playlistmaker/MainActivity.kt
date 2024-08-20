@@ -13,13 +13,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val btnSearch = findViewById<Button>(R.id.btn_search)
-        val btnSearchClickListener: View.OnClickListener = object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                val searchIntent = Intent(this@MainActivity, SearchActivity::class.java)
-                startActivity(searchIntent)
-            }
+        btnSearch.setOnClickListener {
+            val searchIntent = Intent(this, SearchActivity::class.java)
+            startActivity(searchIntent)
         }
-        btnSearch.setOnClickListener(btnSearchClickListener)
 
         val btnLibrary = findViewById<Button>(R.id.btn_library)
         btnLibrary.setOnClickListener {
