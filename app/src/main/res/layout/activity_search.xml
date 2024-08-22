@@ -3,16 +3,44 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    tools:context=".SearchActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
+    android:orientation="vertical"
+    android:background="?attr/colorSecondaryVariant"
+    android:paddingBottom="@dimen/big_padding_1"
+    android:theme="@style/Theme.PlaylistMaker">
 
-    <TextView
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/search_toolbar"
+        app:titleTextAppearance="@style/SearchToolbar.Title"
+        style="@style/SearchToolbar" />
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/search"
-        android:layout_gravity="center"
-        android:gravity="center" />
+        android:paddingVertical="@dimen/medium_padding_1"
+        android:paddingHorizontal="@dimen/medium_padding_2">
+
+        <EditText
+            android:id="@+id/search_field"
+            android:hint="@string/search"
+            style="@style/SearchField" />
+
+        <ImageView
+            android:id="@+id/clear_button"
+            android:visibility="gone"
+            style="@style/ClearButton" />
+    </FrameLayout>
+
+    <!-- Debug TextView-->
+    <TextView
+        android:id="@+id/debug_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/medium_padding_1"
+        android:paddingHorizontal="@dimen/medium_padding_2"
+        android:text=""
+        android:textSize="@dimen/title_text_size" />
 
 </LinearLayout>
