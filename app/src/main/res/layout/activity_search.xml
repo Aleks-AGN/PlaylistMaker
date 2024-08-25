@@ -33,14 +33,4 @@
             style="@style/ClearButton" />
     </FrameLayout>
 
-    <!-- Debug TextView-->
-    <TextView
-        android:id="@+id/debug_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/medium_padding_1"
-        android:paddingHorizontal="@dimen/medium_padding_2"
-        android:text=""
-        android:textSize="@dimen/title_text_size" />
-
 </LinearLayout>

@@ -8,11 +8,18 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
 class SearchActivity : AppCompatActivity() {
+
+    companion object {
+        private const val SEARCH_TEXT = "SEARCH_TEXT"
+        private const val DEFAULT_SEARCH_TEXT = ""
+    }
+
+    private var searchText: String = DEFAULT_SEARCH_TEXT
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -24,8 +31,6 @@ class SearchActivity : AppCompatActivity() {
 
         val searchField = findViewById<EditText>(R.id.search_field)
         val clearButton = findViewById<ImageView>(R.id.clear_button)
-        // Debug TextView
-        val debugTextView = findViewById<TextView>(R.id.debug_text_view)
 
         clearButton.setOnClickListener {
             searchField.setText("")
@@ -39,14 +44,25 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
-                //Debug TextView
-                debugTextView.text = s
+                searchText = s.toString()
             }
 
             override fun afterTextChanged(s: Editable?) {
             }
         }
         searchField.addTextChangedListener(simpleTextWatcher)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(SEARCH_TEXT, searchText)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        searchText = savedInstanceState.getString(SEARCH_TEXT, DEFAULT_SEARCH_TEXT)
+        val searchField = findViewById<EditText>(R.id.search_field)
+        searchField.setText(searchText)
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
