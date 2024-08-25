@@ -9,8 +9,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?attr/colorPrimaryVariant"
-    android:paddingBottom="@dimen/big_padding_1"
-    android:theme="@style/Theme.PlaylistMaker">
+    android:paddingBottom="@dimen/big_padding_1">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/main_toolbar"
