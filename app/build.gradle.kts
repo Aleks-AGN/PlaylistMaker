@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.playlistmaker"
+    namespace = "com.aleksagn.playlistmaker"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.playlistmaker"
+        applicationId = "com.aleksagn.playlistmaker"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
@@ -39,6 +39,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

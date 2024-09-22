@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.aleksagn.playlistmaker
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
