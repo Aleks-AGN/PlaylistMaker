@@ -35,6 +35,7 @@
             <TextView
                 android:id="@+id/artist_name"
                 style="@style/TrackDescription"
+                android:layout_weight="1"
                 tools:text="@string/artist_name" />
 
             <ImageView

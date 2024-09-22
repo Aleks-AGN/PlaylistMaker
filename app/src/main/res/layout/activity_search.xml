@@ -27,7 +27,7 @@
             style="@style/SearchField" />
 
         <ImageView
-            android:id="@+id/clear_button"
+            android:id="@+id/btn_clear"
             android:visibility="gone"
             style="@style/ClearButton" />
     </FrameLayout>
@@ -38,5 +38,38 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/medium_margin"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <LinearLayout
+        android:id="@+id/placeholder_nothing_found"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView style="@style/EmptySearchIcon" />
+
+        <TextView
+            android:text="@string/empty_search"
+            style="@style/EmptySearchText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/placeholder_net_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView style="@style/NetErrorIcon" />
+
+        <TextView
+            android:text="@string/net_error"
+            style="@style/NetErrorText" />
+
+        <Button
+            android:id="@+id/btn_update"
+            android:text="@string/update_search"
+            style="@style/UpdateButton" />
+    </LinearLayout>
 
 </LinearLayout>
