@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
@@ -84,7 +85,7 @@ class SearchActivity : AppCompatActivity() {
         searchField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
+                clearButton.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
             }
             override fun afterTextChanged(s: Editable?) {}
@@ -130,20 +131,20 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun updateVisability() {
-        trackListView.visibility = View.VISIBLE
-        placeholderNothingFound.visibility = View.GONE
-        placeholderNetError.visibility = View.GONE
+        trackListView.isVisible = true
+        placeholderNothingFound.isVisible = false
+        placeholderNetError.isVisible = false
     }
 
     private fun showMessage(type: String) {
-        trackListView.visibility = View.GONE
+        trackListView.isVisible = false
         when (type) {
             NOTHING_FOUND -> {
-                placeholderNetError.visibility = View.GONE
-                placeholderNothingFound.visibility = View.VISIBLE }
+                placeholderNetError.isVisible = false
+                placeholderNothingFound.isVisible = true }
             NET_ERROR -> {
-                placeholderNothingFound.visibility = View.GONE
-                placeholderNetError.visibility = View.VISIBLE }
+                placeholderNothingFound.isVisible = false
+                placeholderNetError.isVisible = true }
         }
     }
 
