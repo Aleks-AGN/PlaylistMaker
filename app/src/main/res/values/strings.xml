@@ -5,6 +5,9 @@
     <string name="track_name">Название композиции</string>
     <string name="artist_name">Имя исполнителя</string>
     <string name="track_time">Продолжительность трека</string>
+    <string name="empty_search">Ничего не нашлось</string>
+    <string name="net_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="update_search">Обновить</string>
     <string name="library">Медиатека</string>
     <string name="settings">Настройки</string>
     <string name="dark_theme">Темная тема</string>
