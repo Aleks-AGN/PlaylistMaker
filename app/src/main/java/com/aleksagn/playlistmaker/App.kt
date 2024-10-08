@@ -1,11 +1,11 @@
 package com.aleksagn.playlistmaker
 
 import android.app.Application
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
 const val DAY_NIGHT_THEME_KEY = "key_for_day_night_theme"
+const val SEARCH_HISTORY_LIST_KEY = "key_for_search_history_list"
 
 class App : Application() {
     var darkTheme = false
