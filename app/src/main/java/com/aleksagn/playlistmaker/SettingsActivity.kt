@@ -27,13 +27,7 @@ class SettingsActivity : AppCompatActivity() {
                 else -> false
             }
         btnThemeSwitcher.setOnCheckedChangeListener { _, isChecked ->
-            AppCompatDelegate.setDefaultNightMode(
-                if (isChecked) {
-                    AppCompatDelegate.MODE_NIGHT_YES
-                } else {
-                    AppCompatDelegate.MODE_NIGHT_NO
-                }
-            )
+            (applicationContext as App).switchTheme(isChecked)
         }
 
         val btnShare = findViewById<TextView>(R.id.text_view_share)

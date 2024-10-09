@@ -2,7 +2,8 @@
 <resources>
     <dimen name="small_margin">8dp</dimen>
     <dimen name="medium_margin">16dp</dimen>
-    <dimen name="big_margin">24dp</dimen>
+    <dimen name="big_margin_1">24dp</dimen>
+    <dimen name="big_margin_2">42dp</dimen>
     <dimen name="small_padding">8dp</dimen>
     <dimen name="medium_padding_1">12dp</dimen>
     <dimen name="medium_padding_2">16dp</dimen>

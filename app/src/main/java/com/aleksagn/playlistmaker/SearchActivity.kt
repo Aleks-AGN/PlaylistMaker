@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -39,30 +38,52 @@ class SearchActivity : AppCompatActivity() {
 
     private val iTunesService = retrofit.create(ITunesApi::class.java)
     private val tracks = ArrayList<Track>()
+    private var historyTracks = ArrayList<Track>()
     private val adapter = TrackAdapter(tracks)
+    private val historyAdapter = TrackAdapter(historyTracks)
     private var searchText: String = DEFAULT_SEARCH_TEXT
 
-    private lateinit var searchField: EditText
-    private lateinit var trackListView: RecyclerView
-    private lateinit var clearButton: ImageView
-    private lateinit var updateButton: Button
     private lateinit var toolbar: Toolbar
+    private lateinit var searchField: EditText
+    private lateinit var clearButton: ImageView
+
+    private lateinit var searchViewGroup: LinearLayout
+    private lateinit var trackListView: RecyclerView
     private lateinit var placeholderNothingFound: LinearLayout
     private lateinit var placeholderNetError: LinearLayout
+    private lateinit var updateButton: Button
+
+    private lateinit var historySearchViewGroup: LinearLayout
+    private lateinit var historyTrackListView: RecyclerView
+    private lateinit var clearSearchHistoryButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        searchField = findViewById(R.id.search_field)
-        trackListView = findViewById(R.id.trackList)
-        clearButton = findViewById(R.id.btn_clear)
-        updateButton = findViewById(R.id.btn_update)
         toolbar = findViewById(R.id.search_toolbar)
+        searchField = findViewById(R.id.search_field)
+        clearButton = findViewById(R.id.btn_clear)
+
+        searchViewGroup = findViewById(R.id.search_view_group)
+        trackListView = findViewById(R.id.track_list)
         placeholderNothingFound = findViewById(R.id.placeholder_nothing_found)
         placeholderNetError = findViewById(R.id.placeholder_net_error)
+        updateButton = findViewById(R.id.btn_update)
+
+        historySearchViewGroup = findViewById(R.id.history_search_view_group)
+        historyTrackListView = findViewById(R.id.history_track_list)
+        clearSearchHistoryButton = findViewById(R.id.btn_clear_search_history)
+
+
+        val searchHistory = SearchHistory(this)
 
         trackListView.adapter = adapter
+        adapter.onTrackClickListener = searchHistory
+
+        historyTracks = searchHistory.getHistoryTracks()
+        historyAdapter.tracks = historyTracks
+        historyTrackListView.adapter = historyAdapter
 
         toolbar.setNavigationOnClickListener {
             finish()
@@ -73,6 +94,18 @@ class SearchActivity : AppCompatActivity() {
             tracks.clear()
             updateVisability()
             adapter.notifyDataSetChanged()
+            historyTracks = searchHistory.getHistoryTracks()
+
+            if (historyTracks.isNotEmpty()) {
+                historyAdapter.tracks = historyTracks
+                historyAdapter.notifyDataSetChanged()
+                searchViewGroup.isVisible = false
+                historySearchViewGroup.isVisible = true
+            } else {
+                searchViewGroup.isVisible = true
+                historySearchViewGroup.isVisible = false
+            }
+
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
         }
@@ -82,11 +115,29 @@ class SearchActivity : AppCompatActivity() {
             performSearch()
         }
 
+        clearSearchHistoryButton.setOnClickListener {
+            searchHistory.clearHistoryTracks()
+            historyTracks.clear()
+            historyAdapter.notifyDataSetChanged()
+            historySearchViewGroup.isVisible = false
+        }
+
         searchField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
+                historyTracks = searchHistory.getHistoryTracks()
+
+                if (searchField.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) {
+                    historyAdapter.tracks = historyTracks
+                    historyAdapter.notifyDataSetChanged()
+                    searchViewGroup.isVisible = false
+                    historySearchViewGroup.isVisible = true
+                } else {
+                    searchViewGroup.isVisible = true
+                    historySearchViewGroup.isVisible = false
+                }
             }
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -97,6 +148,20 @@ class SearchActivity : AppCompatActivity() {
                 true
             }
             false
+        }
+
+        searchField.setOnFocusChangeListener { _, hasFocus ->
+            historyTracks = searchHistory.getHistoryTracks()
+
+            if (hasFocus && searchField.text.isEmpty() && historyTracks.isNotEmpty()) {
+                historyAdapter.tracks = historyTracks
+                historyAdapter.notifyDataSetChanged()
+                searchViewGroup.isVisible = false
+                historySearchViewGroup.isVisible = true
+            } else {
+                searchViewGroup.isVisible = true
+                historySearchViewGroup.isVisible = false
+            }
         }
     }
 
