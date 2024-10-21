@@ -84,6 +84,7 @@ class SearchActivity : AppCompatActivity() {
         historyTracks = searchHistory.getHistoryTracks()
         historyAdapter.tracks = historyTracks
         historyTrackListView.adapter = historyAdapter
+        historyAdapter.onTrackClickListener = searchHistory
 
         toolbar.setNavigationOnClickListener {
             finish()
