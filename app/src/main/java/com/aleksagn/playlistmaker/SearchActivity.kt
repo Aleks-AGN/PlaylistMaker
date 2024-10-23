@@ -84,6 +84,7 @@ class SearchActivity : AppCompatActivity() {
         historyTracks = searchHistory.getHistoryTracks()
         historyAdapter.tracks = historyTracks
         historyTrackListView.adapter = historyAdapter
+        historyAdapter.onTrackClickListener = searchHistory
 
         toolbar.setNavigationOnClickListener {
             finish()
@@ -177,6 +178,7 @@ class SearchActivity : AppCompatActivity() {
                         tracks.clear()
                         if (response.body()?.results?.isNotEmpty() == true) {
                             tracks.addAll(response.body()?.results!!)
+                            tracks.removeAll { it.trackName.isNullOrEmpty() || it.trackTimeMillis == 0L }
                             adapter.notifyDataSetChanged()
                         }
                         if (tracks.isEmpty()) {

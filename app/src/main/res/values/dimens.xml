@@ -13,6 +13,7 @@
     <dimen name="upd_btn_radius">54dp</dimen>
     <dimen name="track_image_edge">45dp</dimen>
     <dimen name="desc_text_size">11sp</dimen>
+    <dimen name="track_desc_text_size">13sp</dimen>
     <dimen name="upd_btn_text_size">14sp</dimen>
     <dimen name="menu_text_size">16sp</dimen>
     <dimen name="search_text_size">19sp</dimen>

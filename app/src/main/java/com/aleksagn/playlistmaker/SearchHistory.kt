@@ -2,6 +2,7 @@ package com.aleksagn.playlistmaker
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import com.google.gson.Gson
 
 class SearchHistory(
@@ -10,7 +11,7 @@ class SearchHistory(
 
     val sharedPreferences = context.getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
 
-    override fun onTrackClick(track: Track) {
+    override fun onTrackClick(track: Track, context: Context) {
         val historyTracks = getHistoryTracks()
 
         if (historyTracks.isEmpty()) {
@@ -28,6 +29,13 @@ class SearchHistory(
             }
         }
         putHistoryTracks(historyTracks)
+
+        val playerIntent = Intent(context, PlayerActivity::class.java)
+
+        val jsonTrack = Gson().toJson(track)
+        playerIntent.putExtra("track", jsonTrack)
+
+        context.startActivity(playerIntent)
     }
 
     fun getHistoryTracks(): ArrayList<Track> {
