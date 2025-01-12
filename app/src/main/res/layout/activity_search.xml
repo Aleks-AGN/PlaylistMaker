@@ -32,6 +32,14 @@
             style="@style/ClearButton" />
     </FrameLayout>
 
+    <ProgressBar android:id="@+id/progress_bar"
+        android:layout_width="@dimen/progress_bar_width"
+        android:layout_height="@dimen/progress_bar_height"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/yp_blue"
+        android:layout_marginTop="@dimen/big_margin_3"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:id="@+id/search_view_group"
         android:layout_width="match_parent"

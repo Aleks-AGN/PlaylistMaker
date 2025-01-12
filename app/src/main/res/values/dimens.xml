@@ -4,6 +4,7 @@
     <dimen name="medium_margin">16dp</dimen>
     <dimen name="big_margin_1">24dp</dimen>
     <dimen name="big_margin_2">42dp</dimen>
+    <dimen name="big_margin_3">140dp</dimen>
     <dimen name="small_padding">8dp</dimen>
     <dimen name="medium_padding_1">12dp</dimen>
     <dimen name="medium_padding_2">16dp</dimen>
@@ -11,6 +12,8 @@
     <dimen name="big_padding_2">24dp</dimen>
     <dimen name="btn_radius">16dp</dimen>
     <dimen name="upd_btn_radius">54dp</dimen>
+    <dimen name="progress_bar_width">44dp</dimen>
+    <dimen name="progress_bar_height">44dp</dimen>
     <dimen name="track_image_edge">45dp</dimen>
     <dimen name="desc_text_size">11sp</dimen>
     <dimen name="track_desc_text_size">13sp</dimen>
