@@ -145,7 +145,12 @@ class SearchActivity : AppCompatActivity() {
                     historyAdapter.notifyDataSetChanged()
                     searchViewGroup.isVisible = false
                     historySearchViewGroup.isVisible = true
+                } else if (searchField.hasFocus() && s?.isEmpty() == true) {
+                    tracks.clear()
+                    adapter.notifyDataSetChanged()
+                    updateVisability()
                 } else {
+                    updateVisability()
                     searchViewGroup.isVisible = true
                     historySearchViewGroup.isVisible = false
                 }

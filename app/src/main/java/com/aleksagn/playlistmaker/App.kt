@@ -1,6 +1,8 @@
 package com.aleksagn.playlistmaker
 
 import android.app.Application
+import android.content.Context
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
@@ -14,13 +16,20 @@ class App : Application() {
         super.onCreate()
 
         val sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        darkTheme = sharedPreferences.getBoolean(DAY_NIGHT_THEME_KEY, false)
+
+        darkTheme = sharedPreferences.getBoolean(DAY_NIGHT_THEME_KEY, isDarkTheme(this))
 
         switchTheme(darkTheme)
     }
 
+    private fun isDarkTheme(context: Context): Boolean {
+        return when (context.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> true
+            else -> false
+        }
+    }
+
     fun switchTheme(darkThemeEnabled: Boolean) {
-        val sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
         darkTheme = darkThemeEnabled
 
         AppCompatDelegate.setDefaultNightMode(
@@ -30,6 +39,11 @@ class App : Application() {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
+        saveTheme()
+    }
+
+    fun saveTheme() {
+        val sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
 
         sharedPreferences.edit()
             .putBoolean(DAY_NIGHT_THEME_KEY, darkTheme)
