@@ -2,6 +2,8 @@ package com.aleksagn.playlistmaker
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -11,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
@@ -29,6 +32,7 @@ class SearchActivity : AppCompatActivity() {
         private const val ITUNES_BASE_URL = "https://itunes.apple.com/"
         private const val NOTHING_FOUND = "NOTHING_FOUND"
         private const val NET_ERROR = "NET_ERROR"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
     private val retrofit = Retrofit.Builder()
@@ -42,10 +46,14 @@ class SearchActivity : AppCompatActivity() {
     private val adapter = TrackAdapter(tracks)
     private val historyAdapter = TrackAdapter(historyTracks)
     private var searchText: String = DEFAULT_SEARCH_TEXT
+    private val mainThreadHandler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { performSearch() }
 
     private lateinit var toolbar: Toolbar
     private lateinit var searchField: EditText
     private lateinit var clearButton: ImageView
+
+    private lateinit var progressBar: ProgressBar
 
     private lateinit var searchViewGroup: LinearLayout
     private lateinit var trackListView: RecyclerView
@@ -64,6 +72,8 @@ class SearchActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.search_toolbar)
         searchField = findViewById(R.id.search_field)
         clearButton = findViewById(R.id.btn_clear)
+
+        progressBar = findViewById(R.id.progress_bar)
 
         searchViewGroup = findViewById(R.id.search_view_group)
         trackListView = findViewById(R.id.track_list)
@@ -135,10 +145,16 @@ class SearchActivity : AppCompatActivity() {
                     historyAdapter.notifyDataSetChanged()
                     searchViewGroup.isVisible = false
                     historySearchViewGroup.isVisible = true
+                } else if (searchField.hasFocus() && s?.isEmpty() == true) {
+                    tracks.clear()
+                    adapter.notifyDataSetChanged()
+                    updateVisability()
                 } else {
+                    updateVisability()
                     searchViewGroup.isVisible = true
                     historySearchViewGroup.isVisible = false
                 }
+                searchDebounce()
             }
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -166,14 +182,24 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    private fun searchDebounce() {
+        mainThreadHandler.removeCallbacks(searchRunnable)
+        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     private fun performSearch() {
         if (searchField.text.isNotEmpty()) {
+            searchViewGroup.isVisible = false
+            progressBar.isVisible = true
+
             iTunesService.searchTrack(searchField.text.toString()).enqueue(object :
                 Callback<TracksResponse> {
                 override fun onResponse(call: Call<TracksResponse>,
                                         response: Response<TracksResponse>
                 ) {
                     Log.d("SearchActivity", "onResponse: ${response.body()}")
+                    progressBar.isVisible = false
+                    searchViewGroup.isVisible = true
                     if (response.code() == 200) {
                         tracks.clear()
                         if (response.body()?.results?.isNotEmpty() == true) {
@@ -191,6 +217,8 @@ class SearchActivity : AppCompatActivity() {
 
                 override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
                     Log.d("SearchActivity", "onFailure: $t")
+                    progressBar.isVisible = false
+                    searchViewGroup.isVisible = true
                     showMessage(NET_ERROR)
                 }
             })

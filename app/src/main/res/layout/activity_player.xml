@@ -63,7 +63,7 @@
         android:layout_marginTop="12dp"
         app:layout_constraintEnd_toStartOf="@id/right_border"
         app:layout_constraintStart_toStartOf="@id/left_border"
-        app:layout_constraintBottom_toTopOf="@id/btn_play"
+        app:layout_constraintBottom_toTopOf="@id/btn_queue"
         app:layout_constraintTop_toBottomOf="@+id/track_name" />
 
     <ImageButton
@@ -74,16 +74,29 @@
         app:layout_constraintEnd_toStartOf="@id/right_border"
         app:layout_constraintStart_toEndOf="@id/left_border"
         app:layout_constraintBottom_toTopOf="@id/current_track_time"
-        app:layout_constraintTop_toBottomOf="@+id/artist_name" />
+        app:layout_constraintTop_toBottomOf="@+id/artist_name"
+        android:enabled="false" />
+
+    <ImageButton
+        android:id="@+id/btn_pause"
+        style="@style/PauseButton"
+        android:background="?attr/colorSecondaryVariant"
+        android:layout_marginTop="28dp"
+        app:layout_constraintEnd_toStartOf="@id/right_border"
+        app:layout_constraintStart_toEndOf="@id/left_border"
+        app:layout_constraintBottom_toTopOf="@id/current_track_time"
+        app:layout_constraintTop_toBottomOf="@+id/artist_name"
+        android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/btn_queue"
         style="@style/QueueButton"
         android:background="?attr/colorSecondaryVariant"
+        android:layout_marginTop="54dp"
         android:layout_marginStart="8dp"
         app:layout_constraintStart_toStartOf="@id/left_border"
-        app:layout_constraintTop_toTopOf="@id/btn_play"
-        app:layout_constraintBottom_toBottomOf="@id/btn_play" />
+        app:layout_constraintBottom_toTopOf="@id/current_track_time"
+        app:layout_constraintTop_toBottomOf="@+id/artist_name" />
 
     <ImageButton
         android:id="@+id/btn_favorite_border"
@@ -91,17 +104,17 @@
         android:background="?attr/colorSecondaryVariant"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toStartOf="@id/right_border"
-        app:layout_constraintTop_toTopOf="@id/btn_play"
-        app:layout_constraintBottom_toBottomOf="@id/btn_play" />
+        app:layout_constraintTop_toTopOf="@id/btn_queue"
+        app:layout_constraintBottom_toBottomOf="@id/btn_queue" />
 
     <TextView
         android:id="@+id/current_track_time"
         style="@style/CurrentTrackTime"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="29dp"
         app:layout_constraintEnd_toStartOf="@id/right_border"
         app:layout_constraintStart_toStartOf="@id/left_border"
         app:layout_constraintBottom_toTopOf="@id/track_time_text"
-        app:layout_constraintTop_toBottomOf="@+id/btn_play" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_queue" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/texts_barrier"

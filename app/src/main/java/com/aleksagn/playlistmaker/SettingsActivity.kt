@@ -1,12 +1,10 @@
 package com.aleksagn.playlistmaker
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 
@@ -21,13 +19,11 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val btnThemeSwitcher = findViewById<SwitchMaterial>(R.id.theme_switcher)
-        btnThemeSwitcher.isChecked =
-            when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-                Configuration.UI_MODE_NIGHT_YES -> true
-                else -> false
-            }
+        btnThemeSwitcher.isChecked = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
+            .getBoolean(DAY_NIGHT_THEME_KEY, (applicationContext as App).darkTheme)
         btnThemeSwitcher.setOnCheckedChangeListener { _, isChecked ->
             (applicationContext as App).switchTheme(isChecked)
+            (applicationContext as App).saveTheme()
         }
 
         val btnShare = findViewById<TextView>(R.id.text_view_share)
