@@ -1,8 +1,10 @@
-package com.aleksagn.playlistmaker
+package com.aleksagn.playlistmaker.ui.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.aleksagn.playlistmaker.R
+import com.aleksagn.playlistmaker.domain.models.Track
 
 class TrackAdapter(
     var tracks: List<Track>

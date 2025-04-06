@@ -1,4 +1,4 @@
-package com.aleksagn.playlistmaker
+package com.aleksagn.playlistmaker.domain.models
 
 import java.text.SimpleDateFormat
 import java.util.Locale

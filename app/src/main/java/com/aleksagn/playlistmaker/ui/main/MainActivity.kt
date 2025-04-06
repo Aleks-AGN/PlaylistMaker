@@ -1,9 +1,13 @@
-package com.aleksagn.playlistmaker
+package com.aleksagn.playlistmaker.ui.main
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.aleksagn.playlistmaker.R
+import com.aleksagn.playlistmaker.ui.search.SearchActivity
+import com.aleksagn.playlistmaker.ui.settings.SettingsActivity
+import com.aleksagn.playlistmaker.ui.library.LibraryActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
