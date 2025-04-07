@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.aleksagn.playlistmaker.creator.Creator
 
+const val ITUNES_BASE_URL = "https://itunes.apple.com/"
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
 const val DAY_NIGHT_THEME_KEY = "key_for_day_night_theme"
 const val SEARCH_HISTORY_LIST_KEY = "key_for_search_history_list"

@@ -7,14 +7,14 @@ import java.util.Locale
 
 class PlayerRepositoryImpl : PlayerRepository {
 
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
+    enum class PlayerState {
+        DEFAULT,
+        PREPARED,
+        PLAYING,
+        PAUSED
     }
 
-    private var playerState = STATE_DEFAULT
+    private var playerState = PlayerState.DEFAULT
     private var mediaPlayer = MediaPlayer()
 
     override fun preparePlayer(previewUrl: String, onPrepare: () -> Unit, onComplete: () -> Unit) {
@@ -23,27 +23,27 @@ class PlayerRepositoryImpl : PlayerRepository {
 
         mediaPlayer.setOnPreparedListener {
             onPrepare()
-            playerState = STATE_PREPARED
+            playerState = PlayerState.PREPARED
         }
 
         mediaPlayer.setOnCompletionListener {
             onComplete()
-            playerState = STATE_PREPARED
+            playerState = PlayerState.PREPARED
         }
     }
 
     override fun startPlayer() {
         mediaPlayer.start()
-        playerState = STATE_PLAYING
+        playerState = PlayerState.PLAYING
     }
 
     override fun pausePlayer() {
         mediaPlayer.pause()
-        playerState = STATE_PAUSED
+        playerState = PlayerState.PAUSED
     }
 
     override fun getCurrentPlayTime(): String {
-        if (playerState == STATE_PLAYING) {
+        if (playerState == PlayerState.PLAYING) {
             return SimpleDateFormat(
                 "mm:ss",
                 Locale.getDefault()
