@@ -1,4 +1,4 @@
-package com.aleksagn.playlistmaker
+package com.aleksagn.playlistmaker.ui.search
 
 import android.content.Context
 import android.os.Bundle
@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -18,29 +17,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.aleksagn.playlistmaker.R
+import com.aleksagn.playlistmaker.creator.Creator
+import com.aleksagn.playlistmaker.domain.models.Track
+import com.aleksagn.playlistmaker.domain.api.TracksInteractor
+import com.aleksagn.playlistmaker.domain.models.TracksResponse
 
 class SearchActivity : AppCompatActivity() {
 
     companion object {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         private const val DEFAULT_SEARCH_TEXT = ""
-        private const val ITUNES_BASE_URL = "https://itunes.apple.com/"
         private const val NOTHING_FOUND = "NOTHING_FOUND"
         private const val NET_ERROR = "NET_ERROR"
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(ITUNES_BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val iTunesService = retrofit.create(ITunesApi::class.java)
+    private val tracksInteractor = Creator.provideTracksInteractor()
     private val tracks = ArrayList<Track>()
     private var historyTracks = ArrayList<Track>()
     private val adapter = TrackAdapter(tracks)
@@ -85,13 +78,12 @@ class SearchActivity : AppCompatActivity() {
         historyTrackListView = findViewById(R.id.history_track_list)
         clearSearchHistoryButton = findViewById(R.id.btn_clear_search_history)
 
-
-        val searchHistory = SearchHistory(this)
+        val searchHistory = SearchHistory()
 
         trackListView.adapter = adapter
         adapter.onTrackClickListener = searchHistory
 
-        historyTracks = searchHistory.getHistoryTracks()
+        historyTracks = searchHistory.historyTracksRepository.getHistoryTracks()
         historyAdapter.tracks = historyTracks
         historyTrackListView.adapter = historyAdapter
         historyAdapter.onTrackClickListener = searchHistory
@@ -105,7 +97,7 @@ class SearchActivity : AppCompatActivity() {
             tracks.clear()
             updateVisability()
             adapter.notifyDataSetChanged()
-            historyTracks = searchHistory.getHistoryTracks()
+            historyTracks = searchHistory.historyTracksRepository.getHistoryTracks()
 
             if (historyTracks.isNotEmpty()) {
                 historyAdapter.tracks = historyTracks
@@ -127,7 +119,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearSearchHistoryButton.setOnClickListener {
-            searchHistory.clearHistoryTracks()
+            searchHistory.historyTracksRepository.clearHistoryTracks()
             historyTracks.clear()
             historyAdapter.notifyDataSetChanged()
             historySearchViewGroup.isVisible = false
@@ -138,7 +130,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
-                historyTracks = searchHistory.getHistoryTracks()
+                historyTracks = searchHistory.historyTracksRepository.getHistoryTracks()
 
                 if (searchField.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) {
                     historyAdapter.tracks = historyTracks
@@ -168,7 +160,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         searchField.setOnFocusChangeListener { _, hasFocus ->
-            historyTracks = searchHistory.getHistoryTracks()
+            historyTracks = searchHistory.historyTracksRepository.getHistoryTracks()
 
             if (hasFocus && searchField.text.isEmpty() && historyTracks.isNotEmpty()) {
                 historyAdapter.tracks = historyTracks
@@ -192,36 +184,27 @@ class SearchActivity : AppCompatActivity() {
             searchViewGroup.isVisible = false
             progressBar.isVisible = true
 
-            iTunesService.searchTrack(searchField.text.toString()).enqueue(object :
-                Callback<TracksResponse> {
-                override fun onResponse(call: Call<TracksResponse>,
-                                        response: Response<TracksResponse>
-                ) {
-                    Log.d("SearchActivity", "onResponse: ${response.body()}")
-                    progressBar.isVisible = false
-                    searchViewGroup.isVisible = true
-                    if (response.code() == 200) {
-                        tracks.clear()
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            tracks.addAll(response.body()?.results!!)
-                            tracks.removeAll { it.trackName.isNullOrEmpty() || it.trackTimeMillis == 0L }
-                            adapter.notifyDataSetChanged()
+            tracksInteractor.searchTracks(
+                searchField.text.toString(),
+                consumer = object : TracksInteractor.TracksConsumer {
+                    override fun consume(foundTracks: TracksResponse) {
+                        mainThreadHandler.post {
+                            progressBar.isVisible = false
+                            searchViewGroup.isVisible = true
+                            if (foundTracks.resultCode == 200) {
+                                tracks.clear()
+                                if (foundTracks.results.isNotEmpty()) {
+                                    tracks.addAll(foundTracks.results)
+                                    adapter.notifyDataSetChanged()
+                                } else {
+                                    showMessage(NOTHING_FOUND)
+                                }
+                            } else {
+                                showMessage(NET_ERROR)
+                            }
                         }
-                        if (tracks.isEmpty()) {
-                            showMessage(NOTHING_FOUND)
-                        }
-                    } else {
-                        showMessage(NET_ERROR)
                     }
-                }
-
-                override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                    Log.d("SearchActivity", "onFailure: $t")
-                    progressBar.isVisible = false
-                    searchViewGroup.isVisible = true
-                    showMessage(NET_ERROR)
-                }
-            })
+                })
         }
     }
 

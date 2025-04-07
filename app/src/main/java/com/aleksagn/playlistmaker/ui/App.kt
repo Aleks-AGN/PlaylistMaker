@@ -1,10 +1,10 @@
-package com.aleksagn.playlistmaker
+package com.aleksagn.playlistmaker.ui
 
 import android.app.Application
-import android.content.Context
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.aleksagn.playlistmaker.creator.Creator
 
+const val ITUNES_BASE_URL = "https://itunes.apple.com/"
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
 const val DAY_NIGHT_THEME_KEY = "key_for_day_night_theme"
 const val SEARCH_HISTORY_LIST_KEY = "key_for_search_history_list"
@@ -15,18 +15,13 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
+        Creator.initApplication(this)
+        Creator.initGson()
+        val settingsInteractor = Creator.provideSettingsInteractor()
 
-        darkTheme = sharedPreferences.getBoolean(DAY_NIGHT_THEME_KEY, isDarkTheme(this))
+        darkTheme = settingsInteractor.loadDarkThemeModeSetting()
 
         switchTheme(darkTheme)
-    }
-
-    private fun isDarkTheme(context: Context): Boolean {
-        return when (context.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_YES -> true
-            else -> false
-        }
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
@@ -43,10 +38,7 @@ class App : Application() {
     }
 
     fun saveTheme() {
-        val sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-
-        sharedPreferences.edit()
-            .putBoolean(DAY_NIGHT_THEME_KEY, darkTheme)
-            .apply()
+        val settingsInteractor = Creator.provideSettingsInteractor()
+        settingsInteractor.saveDarkThemeModeSetting(darkTheme)
     }
 }
