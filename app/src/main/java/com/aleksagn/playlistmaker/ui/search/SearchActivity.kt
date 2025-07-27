@@ -1,6 +1,7 @@
 package com.aleksagn.playlistmaker.ui.search
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,6 +23,7 @@ import com.aleksagn.playlistmaker.creator.Creator
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
 import com.aleksagn.playlistmaker.domain.models.TracksResponse
+import com.aleksagn.playlistmaker.ui.player.PlayerActivity
 
 class SearchActivity : AppCompatActivity() {
 
@@ -31,9 +33,14 @@ class SearchActivity : AppCompatActivity() {
         private const val NOTHING_FOUND = "NOTHING_FOUND"
         private const val NET_ERROR = "NET_ERROR"
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
     private val tracksInteractor = Creator.provideTracksInteractor()
+    private val historyTracksRepository = Creator.getHistoryTracksRepository()
+    private val handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
+
     private val tracks = ArrayList<Track>()
     private var historyTracks = ArrayList<Track>()
     private val adapter = TrackAdapter(tracks)
@@ -78,15 +85,44 @@ class SearchActivity : AppCompatActivity() {
         historyTrackListView = findViewById(R.id.history_track_list)
         clearSearchHistoryButton = findViewById(R.id.btn_clear_search_history)
 
-        val searchHistory = SearchHistory()
+        val onTrackClickListener = object : TrackAdapter.OnTrackClickListener {
+            override fun onTrackClick(track: Track) {
+                if (clickDebounce()) {
+                    val historyTracks = historyTracksRepository.getHistoryTracks()
+                    if (historyTracks.isEmpty()) {
+                        historyTracks.add(track)
+                    } else {
+                        val index = historyTracks.indexOfFirst { it.trackId == track.trackId }
+                        if (index == -1) {
+                            if (historyTracks.size == 10) {
+                                historyTracks.removeAt(9)
+                            }
+                            historyTracks.add(0, track)
+                        } else {
+                            historyTracks.removeAt(index)
+                            historyTracks.add(0, track)
+                        }
+                    }
+                    historyTracksRepository.putHistoryTracks(historyTracks)
+
+                    val playerIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+
+                    val jsonTrack = Creator.getGson().toJson(track)
+                    playerIntent.putExtra("track", jsonTrack)
+
+                    startActivity(playerIntent)
+                }
+            }
+        }
 
         trackListView.adapter = adapter
-        adapter.onTrackClickListener = searchHistory
+        adapter.onTrackClickListener = onTrackClickListener
 
-        historyTracks = searchHistory.historyTracksRepository.getHistoryTracks()
+        historyTracks = historyTracksRepository.getHistoryTracks()
         historyAdapter.tracks = historyTracks
+
         historyTrackListView.adapter = historyAdapter
-        historyAdapter.onTrackClickListener = searchHistory
+        historyAdapter.onTrackClickListener = onTrackClickListener
 
         toolbar.setNavigationOnClickListener {
             finish()
@@ -97,7 +133,7 @@ class SearchActivity : AppCompatActivity() {
             tracks.clear()
             updateVisability()
             adapter.notifyDataSetChanged()
-            historyTracks = searchHistory.historyTracksRepository.getHistoryTracks()
+            historyTracks = historyTracksRepository.getHistoryTracks()
 
             if (historyTracks.isNotEmpty()) {
                 historyAdapter.tracks = historyTracks
@@ -119,7 +155,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearSearchHistoryButton.setOnClickListener {
-            searchHistory.historyTracksRepository.clearHistoryTracks()
+            historyTracksRepository.clearHistoryTracks()
             historyTracks.clear()
             historyAdapter.notifyDataSetChanged()
             historySearchViewGroup.isVisible = false
@@ -130,7 +166,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
-                historyTracks = searchHistory.historyTracksRepository.getHistoryTracks()
+                historyTracks = historyTracksRepository.getHistoryTracks()
 
                 if (searchField.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) {
                     historyAdapter.tracks = historyTracks
@@ -160,7 +196,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         searchField.setOnFocusChangeListener { _, hasFocus ->
-            historyTracks = searchHistory.historyTracksRepository.getHistoryTracks()
+            historyTracks = historyTracksRepository.getHistoryTracks()
 
             if (hasFocus && searchField.text.isEmpty() && historyTracks.isNotEmpty()) {
                 historyAdapter.tracks = historyTracks
@@ -172,6 +208,17 @@ class SearchActivity : AppCompatActivity() {
                 historySearchViewGroup.isVisible = false
             }
         }
+    }
+
+
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
     private fun searchDebounce() {
