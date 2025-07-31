@@ -5,7 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.aleksagn.playlistmaker.R
-import com.aleksagn.playlistmaker.creator.Creator
+import com.aleksagn.playlistmaker.util.Creator
 import com.aleksagn.playlistmaker.databinding.ActivitySettingsBinding
 import com.aleksagn.playlistmaker.ui.App
 

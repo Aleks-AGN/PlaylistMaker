@@ -3,7 +3,7 @@ package com.aleksagn.playlistmaker.data.impl
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import com.aleksagn.playlistmaker.creator.Creator
+import com.aleksagn.playlistmaker.util.Creator
 import com.aleksagn.playlistmaker.data.PreferencesStorage
 import com.aleksagn.playlistmaker.ui.DAY_NIGHT_THEME_KEY
 import com.aleksagn.playlistmaker.ui.SEARCH_HISTORY_LIST_KEY

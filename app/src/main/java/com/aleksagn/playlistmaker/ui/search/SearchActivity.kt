@@ -11,11 +11,10 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import com.aleksagn.playlistmaker.creator.Creator
+import com.aleksagn.playlistmaker.util.Creator
 import com.aleksagn.playlistmaker.databinding.ActivitySearchBinding
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
-import com.aleksagn.playlistmaker.domain.models.TracksResponse
 import com.aleksagn.playlistmaker.ui.player.PlayerActivity
 
 class SearchActivity : AppCompatActivity() {
@@ -174,8 +173,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-
-
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
@@ -198,19 +195,20 @@ class SearchActivity : AppCompatActivity() {
             tracksInteractor.searchTracks(
                 binding.searchField.text.toString(),
                 consumer = object : TracksInteractor.TracksConsumer {
-                    override fun consume(foundTracks: TracksResponse) {
+                    override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
                         mainThreadHandler.post {
                             binding.progressBar.isVisible = false
                             binding.searchViewGroup.isVisible = true
-                            if (foundTracks.resultCode == 200) {
+                            if (foundTracks!= null) {
                                 tracks.clear()
-                                if (foundTracks.results.isNotEmpty()) {
-                                    tracks.addAll(foundTracks.results)
+                                if (foundTracks.isNotEmpty()) {
+                                    tracks.addAll(foundTracks)
                                     adapter.notifyDataSetChanged()
                                 } else {
                                     showMessage(NOTHING_FOUND)
                                 }
-                            } else {
+                            }
+                            if (errorMessage != null) {
                                 showMessage(NET_ERROR)
                             }
                         }

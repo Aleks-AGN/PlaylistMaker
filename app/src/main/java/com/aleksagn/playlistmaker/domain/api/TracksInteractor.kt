@@ -1,11 +1,11 @@
 package com.aleksagn.playlistmaker.domain.api
 
-import com.aleksagn.playlistmaker.domain.models.TracksResponse
+import com.aleksagn.playlistmaker.domain.models.Track
 
 interface TracksInteractor {
     fun searchTracks(expression: String, consumer: TracksConsumer)
 
     interface TracksConsumer {
-        fun consume(foundTracks: TracksResponse)
+        fun consume(foundTracks: List<Track>?, errorMessage: String?)
     }
 }

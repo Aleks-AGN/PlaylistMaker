@@ -1,6 +1,6 @@
 package com.aleksagn.playlistmaker.data.impl
 
-import com.aleksagn.playlistmaker.creator.Creator
+import com.aleksagn.playlistmaker.util.Creator
 import com.aleksagn.playlistmaker.data.PreferencesStorage
 import com.aleksagn.playlistmaker.domain.api.HistoryTracksRepository
 import com.aleksagn.playlistmaker.domain.models.Track

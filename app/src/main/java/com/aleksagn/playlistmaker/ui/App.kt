@@ -2,7 +2,7 @@ package com.aleksagn.playlistmaker.ui
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.aleksagn.playlistmaker.creator.Creator
+import com.aleksagn.playlistmaker.util.Creator
 
 const val ITUNES_BASE_URL = "https://itunes.apple.com/"
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"

@@ -1,6 +1,7 @@
-package com.aleksagn.playlistmaker.creator
+package com.aleksagn.playlistmaker.util
 
 import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
 import com.aleksagn.playlistmaker.data.PreferencesStorage
 import com.aleksagn.playlistmaker.data.impl.HistoryTracksRepositoryImpl
@@ -49,12 +50,12 @@ object Creator {
         return application.getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, Application.MODE_PRIVATE)
     }
 
-    private fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient(iTunesApiService))
+    private fun getTracksRepository(context: Context): TracksRepository {
+        return TracksRepositoryImpl(RetrofitNetworkClient(iTunesApiService, context))
     }
 
     fun provideTracksInteractor(): TracksInteractor {
-        return TracksInteractorImpl(getTracksRepository())
+        return TracksInteractorImpl(getTracksRepository(application))
     }
 
     fun getPreferencesStorage(): PreferencesStorage {

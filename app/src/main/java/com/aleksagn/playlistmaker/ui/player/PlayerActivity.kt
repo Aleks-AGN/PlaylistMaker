@@ -8,7 +8,7 @@ import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.aleksagn.playlistmaker.R
-import com.aleksagn.playlistmaker.creator.Creator
+import com.aleksagn.playlistmaker.util.Creator
 import com.aleksagn.playlistmaker.databinding.ActivityPlayerBinding
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.bumptech.glide.Glide
