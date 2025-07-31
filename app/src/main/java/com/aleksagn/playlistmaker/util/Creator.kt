@@ -9,8 +9,6 @@ import com.aleksagn.playlistmaker.data.impl.PlayerRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.PreferencesStorageImpl
 import com.aleksagn.playlistmaker.data.impl.SettingsRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.TracksRepositoryImpl
-import com.aleksagn.playlistmaker.data.network.ITunesApiService
-import com.aleksagn.playlistmaker.data.network.RetrofitClient
 import com.aleksagn.playlistmaker.data.network.RetrofitNetworkClient
 import com.aleksagn.playlistmaker.domain.api.HistoryTracksRepository
 import com.aleksagn.playlistmaker.domain.api.PlayerInteractor
@@ -28,7 +26,6 @@ import com.google.gson.Gson
 object Creator {
     private lateinit var application: Application
     private lateinit var gson: Gson
-    private val iTunesApiService: ITunesApiService = RetrofitClient.createITunesApiService()
 
     fun initApplication(application: Application) {
         this.application = application
@@ -51,7 +48,7 @@ object Creator {
     }
 
     private fun getTracksRepository(context: Context): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient(iTunesApiService, context))
+        return TracksRepositoryImpl(RetrofitNetworkClient(context))
     }
 
     fun provideTracksInteractor(): TracksInteractor {
