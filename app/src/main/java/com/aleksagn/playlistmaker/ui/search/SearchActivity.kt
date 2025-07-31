@@ -9,17 +9,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
-import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.creator.Creator
+import com.aleksagn.playlistmaker.databinding.ActivitySearchBinding
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
 import com.aleksagn.playlistmaker.domain.models.TracksResponse
@@ -49,41 +42,12 @@ class SearchActivity : AppCompatActivity() {
     private val mainThreadHandler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearch() }
 
-    private lateinit var toolbar: Toolbar
-    private lateinit var searchField: EditText
-    private lateinit var clearButton: ImageView
-
-    private lateinit var progressBar: ProgressBar
-
-    private lateinit var searchViewGroup: LinearLayout
-    private lateinit var trackListView: RecyclerView
-    private lateinit var placeholderNothingFound: LinearLayout
-    private lateinit var placeholderNetError: LinearLayout
-    private lateinit var updateButton: Button
-
-    private lateinit var historySearchViewGroup: LinearLayout
-    private lateinit var historyTrackListView: RecyclerView
-    private lateinit var clearSearchHistoryButton: Button
+    private lateinit var binding: ActivitySearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
-
-        toolbar = findViewById(R.id.search_toolbar)
-        searchField = findViewById(R.id.search_field)
-        clearButton = findViewById(R.id.btn_clear)
-
-        progressBar = findViewById(R.id.progress_bar)
-
-        searchViewGroup = findViewById(R.id.search_view_group)
-        trackListView = findViewById(R.id.track_list)
-        placeholderNothingFound = findViewById(R.id.placeholder_nothing_found)
-        placeholderNetError = findViewById(R.id.placeholder_net_error)
-        updateButton = findViewById(R.id.btn_update)
-
-        historySearchViewGroup = findViewById(R.id.history_search_view_group)
-        historyTrackListView = findViewById(R.id.history_track_list)
-        clearSearchHistoryButton = findViewById(R.id.btn_clear_search_history)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val onTrackClickListener = object : TrackAdapter.OnTrackClickListener {
             override fun onTrackClick(track: Track) {
@@ -115,21 +79,21 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        trackListView.adapter = adapter
+        binding.trackList.adapter = adapter
         adapter.onTrackClickListener = onTrackClickListener
 
         historyTracks = historyTracksRepository.getHistoryTracks()
         historyAdapter.tracks = historyTracks
 
-        historyTrackListView.adapter = historyAdapter
+        binding.historyTrackList.adapter = historyAdapter
         historyAdapter.onTrackClickListener = onTrackClickListener
 
-        toolbar.setNavigationOnClickListener {
+        binding.searchToolbar.setNavigationOnClickListener {
             finish()
         }
 
-        clearButton.setOnClickListener {
-            searchField.setText("")
+        binding.btnClear.setOnClickListener {
+            binding.searchField.setText("")
             tracks.clear()
             updateVisability()
             adapter.notifyDataSetChanged()
@@ -138,56 +102,56 @@ class SearchActivity : AppCompatActivity() {
             if (historyTracks.isNotEmpty()) {
                 historyAdapter.tracks = historyTracks
                 historyAdapter.notifyDataSetChanged()
-                searchViewGroup.isVisible = false
-                historySearchViewGroup.isVisible = true
+                binding.searchViewGroup.isVisible = false
+                binding.historySearchViewGroup.isVisible = true
             } else {
-                searchViewGroup.isVisible = true
-                historySearchViewGroup.isVisible = false
+                binding.searchViewGroup.isVisible = true
+                binding.historySearchViewGroup.isVisible = false
             }
 
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken, 0)
         }
 
-        updateButton.setOnClickListener {
+        binding.btnUpdate.setOnClickListener {
             updateVisability()
             performSearch()
         }
 
-        clearSearchHistoryButton.setOnClickListener {
+        binding.btnClearSearchHistory.setOnClickListener {
             historyTracksRepository.clearHistoryTracks()
             historyTracks.clear()
             historyAdapter.notifyDataSetChanged()
-            historySearchViewGroup.isVisible = false
+            binding.historySearchViewGroup.isVisible = false
         }
 
-        searchField.addTextChangedListener(object : TextWatcher {
+        binding.searchField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.isVisible = !s.isNullOrEmpty()
+                binding.btnClear.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
                 historyTracks = historyTracksRepository.getHistoryTracks()
 
-                if (searchField.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) {
+                if (binding.searchField.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) {
                     historyAdapter.tracks = historyTracks
                     historyAdapter.notifyDataSetChanged()
-                    searchViewGroup.isVisible = false
-                    historySearchViewGroup.isVisible = true
-                } else if (searchField.hasFocus() && s?.isEmpty() == true) {
+                    binding.searchViewGroup.isVisible = false
+                    binding.historySearchViewGroup.isVisible = true
+                } else if (binding.searchField.hasFocus() && s?.isEmpty() == true) {
                     tracks.clear()
                     adapter.notifyDataSetChanged()
                     updateVisability()
                 } else {
                     updateVisability()
-                    searchViewGroup.isVisible = true
-                    historySearchViewGroup.isVisible = false
+                    binding.searchViewGroup.isVisible = true
+                    binding.historySearchViewGroup.isVisible = false
                 }
                 searchDebounce()
             }
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        searchField.setOnEditorActionListener { _, actionId, _ ->
+        binding.searchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSearch()
                 true
@@ -195,17 +159,17 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
-        searchField.setOnFocusChangeListener { _, hasFocus ->
+        binding.searchField.setOnFocusChangeListener { _, hasFocus ->
             historyTracks = historyTracksRepository.getHistoryTracks()
 
-            if (hasFocus && searchField.text.isEmpty() && historyTracks.isNotEmpty()) {
+            if (hasFocus && binding.searchField.text.isEmpty() && historyTracks.isNotEmpty()) {
                 historyAdapter.tracks = historyTracks
                 historyAdapter.notifyDataSetChanged()
-                searchViewGroup.isVisible = false
-                historySearchViewGroup.isVisible = true
+                binding.searchViewGroup.isVisible = false
+                binding.historySearchViewGroup.isVisible = true
             } else {
-                searchViewGroup.isVisible = true
-                historySearchViewGroup.isVisible = false
+                binding.searchViewGroup.isVisible = true
+                binding.historySearchViewGroup.isVisible = false
             }
         }
     }
@@ -227,17 +191,17 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun performSearch() {
-        if (searchField.text.isNotEmpty()) {
-            searchViewGroup.isVisible = false
-            progressBar.isVisible = true
+        if (binding.searchField.text.isNotEmpty()) {
+            binding.searchViewGroup.isVisible = false
+            binding.progressBar.isVisible = true
 
             tracksInteractor.searchTracks(
-                searchField.text.toString(),
+                binding.searchField.text.toString(),
                 consumer = object : TracksInteractor.TracksConsumer {
                     override fun consume(foundTracks: TracksResponse) {
                         mainThreadHandler.post {
-                            progressBar.isVisible = false
-                            searchViewGroup.isVisible = true
+                            binding.progressBar.isVisible = false
+                            binding.searchViewGroup.isVisible = true
                             if (foundTracks.resultCode == 200) {
                                 tracks.clear()
                                 if (foundTracks.results.isNotEmpty()) {
@@ -256,20 +220,20 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun updateVisability() {
-        trackListView.isVisible = true
-        placeholderNothingFound.isVisible = false
-        placeholderNetError.isVisible = false
+        binding.trackList.isVisible = true
+        binding.placeholderNothingFound.isVisible = false
+        binding.placeholderNetError.isVisible = false
     }
 
     private fun showMessage(type: String) {
-        trackListView.isVisible = false
+        binding.trackList.isVisible = false
         when (type) {
             NOTHING_FOUND -> {
-                placeholderNetError.isVisible = false
-                placeholderNothingFound.isVisible = true }
+                binding.placeholderNetError.isVisible = false
+                binding.placeholderNothingFound.isVisible = true }
             NET_ERROR -> {
-                placeholderNothingFound.isVisible = false
-                placeholderNetError.isVisible = true }
+                binding.placeholderNothingFound.isVisible = false
+                binding.placeholderNetError.isVisible = true }
         }
     }
 
@@ -280,6 +244,6 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        searchField.setText(savedInstanceState.getString(SEARCH_TEXT, DEFAULT_SEARCH_TEXT))
+        binding.searchField.setText(savedInstanceState.getString(SEARCH_TEXT, DEFAULT_SEARCH_TEXT))
     }
 }

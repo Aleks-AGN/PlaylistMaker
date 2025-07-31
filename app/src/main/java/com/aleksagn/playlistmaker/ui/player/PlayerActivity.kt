@@ -5,14 +5,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.creator.Creator
+import com.aleksagn.playlistmaker.databinding.ActivityPlayerBinding
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -25,39 +22,26 @@ class PlayerActivity : AppCompatActivity() {
         private const val DELAY = 250L
     }
 
-    private lateinit var playButton: ImageButton
-    private lateinit var pauseButton: ImageButton
-    private lateinit var currentTrackTime: TextView
     private var previewUrl: String = ""
     private var mainThreadHandler: Handler? = null
     private val playerInteractor = Creator.providePlayerInteractor()
 
+    private lateinit var binding: ActivityPlayerBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val toolbar = findViewById<Toolbar>(R.id.player_toolbar)
-        toolbar.setNavigationOnClickListener {
+        binding.playerToolbar.setNavigationOnClickListener {
             finish()
         }
 
-        val cover = findViewById<ImageView>(R.id.cover)
-        val trackName = findViewById<TextView>(R.id.track_name)
-        val artistName = findViewById<TextView>(R.id.artist_name)
-        val trackTime = findViewById<TextView>(R.id.track_time)
-        val collectionName = findViewById<TextView>(R.id.collection_name)
-        val releaseDate = findViewById<TextView>(R.id.release_date)
-        val primaryGenreName = findViewById<TextView>(R.id.primary_genre_name)
-        val country = findViewById<TextView>(R.id.country)
-        currentTrackTime = findViewById(R.id.current_track_time)
-
-        playButton = findViewById(R.id.btn_play)
-        playButton.setOnClickListener {
+        binding.btnPlay.setOnClickListener {
             startPlayer()
         }
 
-        pauseButton = findViewById(R.id.btn_pause)
-        pauseButton.setOnClickListener {
+        binding.btnPause.setOnClickListener {
             pausePlayer()
         }
 
@@ -65,20 +49,20 @@ class PlayerActivity : AppCompatActivity() {
         val jsonTrack = intent.getStringExtra("track").toString()
         val track = Creator.getGson().fromJson(jsonTrack, Track::class.java)
 
-        trackName.text = track.trackName
-        artistName.text = track.artistName
-        trackTime.text = track.getFormatTime()
+        binding.trackName.text = track.trackName
+        binding.artistName.text = track.artistName
+        binding.trackTime.text = track.getFormatTime()
 
         if (track.collectionName.isNullOrEmpty()) {
-            collectionName.isVisible = false
+            binding.collectionName.isVisible = false
         } else {
-            collectionName.text = track.collectionName
-            collectionName.isVisible = true
+            binding.collectionName.text = track.collectionName
+            binding.collectionName.isVisible = true
         }
 
-        releaseDate.text = track.releaseDate.substring(0, 4)
-        primaryGenreName.text = track.primaryGenreName
-        country.text = track.country
+        binding.releaseDate.text = track.releaseDate.substring(0, 4)
+        binding.primaryGenreName.text = track.primaryGenreName
+        binding.country.text = track.country
 
         previewUrl = track.previewUrl
 
@@ -88,7 +72,7 @@ class PlayerActivity : AppCompatActivity() {
             .fitCenter()
             .centerCrop()
             .transform(RoundedCorners(dpToPx(8f,this.applicationContext)))
-            .into(cover)
+            .into(binding.cover)
 
         mainThreadHandler = Handler(Looper.getMainLooper())
 
@@ -108,14 +92,14 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun preparePlayer() {
         val onPrepare = {
-            playButton.isEnabled = true
+            binding.btnPlay.isEnabled = true
         }
 
         val onComplete = {
-            playButton.isVisible = true
-            pauseButton.isVisible = false
+            binding.btnPlay.isVisible = true
+            binding.btnPause.isVisible = false
             mainThreadHandler?.removeCallbacks(updateCurrentPlayTime())
-            currentTrackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
+            binding.currentTrackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
         }
 
         playerInteractor.preparePlayer(previewUrl, onPrepare, onComplete)
@@ -123,15 +107,15 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun startPlayer() {
         playerInteractor.startPlayer()
-        playButton.isVisible = false
-        pauseButton.isVisible = true
+        binding.btnPlay.isVisible = false
+        binding.btnPause.isVisible = true
         mainThreadHandler?.post(updateCurrentPlayTime())
     }
 
     private fun pausePlayer() {
         playerInteractor.pausePlayer()
-        playButton.isVisible = true
-        pauseButton.isVisible = false
+        binding.btnPlay.isVisible = true
+        binding.btnPause.isVisible = false
         mainThreadHandler?.removeCallbacks(updateCurrentPlayTime())
     }
 
@@ -141,7 +125,7 @@ class PlayerActivity : AppCompatActivity() {
                 val time = playerInteractor.getCurrentPlayTime()
 
                 if (time.isNotEmpty()) {
-                    currentTrackTime.text = time
+                    binding.currentTrackTime.text = time
                     mainThreadHandler?.postDelayed(this, DELAY)
                 }
             }
