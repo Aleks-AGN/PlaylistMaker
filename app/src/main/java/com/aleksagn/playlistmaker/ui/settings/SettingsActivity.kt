@@ -22,9 +22,9 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        val settingsInteractor = Creator.provideSettingsInteractor()
+        val themeSettingInteractor = Creator.provideThemeSettingInteractor()
 
-        binding.themeSwitcher.isChecked = settingsInteractor.loadDarkThemeModeSetting()
+        binding.themeSwitcher.isChecked = themeSettingInteractor.getThemeSetting()
         binding.themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
             (applicationContext as App).switchTheme(isChecked)
             (applicationContext as App).saveTheme()

@@ -2,26 +2,28 @@ package com.aleksagn.playlistmaker.util
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
-import com.aleksagn.playlistmaker.data.PreferencesStorage
-import com.aleksagn.playlistmaker.data.impl.HistoryTracksRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.PlayerRepositoryImpl
-import com.aleksagn.playlistmaker.data.impl.PreferencesStorageImpl
-import com.aleksagn.playlistmaker.data.impl.SettingsRepositoryImpl
+import com.aleksagn.playlistmaker.data.impl.SearchHistoryRepositoryImpl
+import com.aleksagn.playlistmaker.data.impl.ThemeSettingRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.TracksRepositoryImpl
 import com.aleksagn.playlistmaker.data.network.RetrofitNetworkClient
-import com.aleksagn.playlistmaker.domain.api.HistoryTracksRepository
+import com.aleksagn.playlistmaker.data.storage.CommonPrefsStorageClient
+import com.aleksagn.playlistmaker.data.storage.ThemePrefsStorageClient
 import com.aleksagn.playlistmaker.domain.api.PlayerInteractor
 import com.aleksagn.playlistmaker.domain.api.PlayerRepository
-import com.aleksagn.playlistmaker.domain.api.SettingsInteractor
-import com.aleksagn.playlistmaker.domain.api.SettingsRepository
+import com.aleksagn.playlistmaker.domain.api.SearchHistoryInteractor
+import com.aleksagn.playlistmaker.domain.api.SearchHistoryRepository
+import com.aleksagn.playlistmaker.domain.api.ThemeSettingInteractor
+import com.aleksagn.playlistmaker.domain.api.ThemeSettingRepository
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
 import com.aleksagn.playlistmaker.domain.api.TracksRepository
 import com.aleksagn.playlistmaker.domain.impl.PlayerInteractorImpl
-import com.aleksagn.playlistmaker.domain.impl.SettingsInteractorImpl
+import com.aleksagn.playlistmaker.domain.impl.SearchHistoryInteractorImpl
+import com.aleksagn.playlistmaker.domain.impl.ThemeSettingInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.TracksInteractorImpl
-import com.aleksagn.playlistmaker.ui.PLAYLIST_MAKER_PREFERENCES
+import com.aleksagn.playlistmaker.domain.models.Track
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 object Creator {
     private lateinit var application: Application
@@ -31,9 +33,9 @@ object Creator {
         this.application = application
     }
 
-    fun getApplication(): Application {
-        return application
-    }
+//    fun getApplication(): Application {
+//        return application
+//    }
 
     fun initGson() {
         this.gson = Gson()
@@ -41,10 +43,6 @@ object Creator {
 
     fun getGson(): Gson {
         return gson
-    }
-
-    private fun provideSharedPreferences(): SharedPreferences {
-        return application.getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, Application.MODE_PRIVATE)
     }
 
     private fun getTracksRepository(context: Context): TracksRepository {
@@ -55,12 +53,29 @@ object Creator {
         return TracksInteractorImpl(getTracksRepository(application))
     }
 
-    fun getPreferencesStorage(): PreferencesStorage {
-        return PreferencesStorageImpl(provideSharedPreferences())
+    private fun getSearchHistoryRepository(context: Context): SearchHistoryRepository {
+        return SearchHistoryRepositoryImpl(
+            CommonPrefsStorageClient<ArrayList<Track>>(
+            context,
+            "SEARCH_HISTORY_LIST_KEY",
+            object : TypeToken<ArrayList<Track>>() {}.type)
+        )
     }
 
-    fun getHistoryTracksRepository(): HistoryTracksRepository {
-        return HistoryTracksRepositoryImpl(getPreferencesStorage())
+    fun provideSearchHistoryInteractor(): SearchHistoryInteractor {
+        return SearchHistoryInteractorImpl(getSearchHistoryRepository(application))
+    }
+
+    private fun getThemeSettingRepository(context: Context): ThemeSettingRepository {
+        return ThemeSettingRepositoryImpl(
+            ThemePrefsStorageClient(
+                context,
+                "DAY_NIGHT_THEME_KEY")
+        )
+    }
+
+    fun provideThemeSettingInteractor(): ThemeSettingInteractor {
+        return ThemeSettingInteractorImpl(getThemeSettingRepository(application))
     }
 
     private fun getPlayerRepository(): PlayerRepository {
@@ -69,13 +84,5 @@ object Creator {
 
     fun providePlayerInteractor(): PlayerInteractor {
         return PlayerInteractorImpl(getPlayerRepository())
-    }
-
-    fun getSettingsRepository(): SettingsRepository {
-        return SettingsRepositoryImpl(getPreferencesStorage())
-    }
-
-    fun provideSettingsInteractor(): SettingsInteractor {
-        return SettingsInteractorImpl(getSettingsRepository())
     }
 }

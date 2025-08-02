@@ -29,7 +29,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private val tracksInteractor = Creator.provideTracksInteractor()
-    private val historyTracksRepository = Creator.getHistoryTracksRepository()
+    private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
@@ -51,28 +51,10 @@ class SearchActivity : AppCompatActivity() {
         val onTrackClickListener = object : TrackAdapter.OnTrackClickListener {
             override fun onTrackClick(track: Track) {
                 if (clickDebounce()) {
-                    val historyTracks = historyTracksRepository.getHistoryTracks()
-                    if (historyTracks.isEmpty()) {
-                        historyTracks.add(track)
-                    } else {
-                        val index = historyTracks.indexOfFirst { it.trackId == track.trackId }
-                        if (index == -1) {
-                            if (historyTracks.size == 10) {
-                                historyTracks.removeAt(9)
-                            }
-                            historyTracks.add(0, track)
-                        } else {
-                            historyTracks.removeAt(index)
-                            historyTracks.add(0, track)
-                        }
-                    }
-                    historyTracksRepository.putHistoryTracks(historyTracks)
-
+                    searchHistoryInteractor.saveTrackToHistory(track)
                     val playerIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
-
                     val jsonTrack = Creator.getGson().toJson(track)
                     playerIntent.putExtra("track", jsonTrack)
-
                     startActivity(playerIntent)
                 }
             }
@@ -81,7 +63,7 @@ class SearchActivity : AppCompatActivity() {
         binding.trackList.adapter = adapter
         adapter.onTrackClickListener = onTrackClickListener
 
-        historyTracks = historyTracksRepository.getHistoryTracks()
+        historyTracks = searchHistoryInteractor.getTracksHistory().toCollection(ArrayList())
         historyAdapter.tracks = historyTracks
 
         binding.historyTrackList.adapter = historyAdapter
@@ -96,7 +78,7 @@ class SearchActivity : AppCompatActivity() {
             tracks.clear()
             updateVisability()
             adapter.notifyDataSetChanged()
-            historyTracks = historyTracksRepository.getHistoryTracks()
+            historyTracks = searchHistoryInteractor.getTracksHistory().toCollection(ArrayList())
 
             if (historyTracks.isNotEmpty()) {
                 historyAdapter.tracks = historyTracks
@@ -118,7 +100,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.btnClearSearchHistory.setOnClickListener {
-            historyTracksRepository.clearHistoryTracks()
+            searchHistoryInteractor.clearTracksHistory()
             historyTracks.clear()
             historyAdapter.notifyDataSetChanged()
             binding.historySearchViewGroup.isVisible = false
@@ -129,7 +111,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.btnClear.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
-                historyTracks = historyTracksRepository.getHistoryTracks()
+                historyTracks = searchHistoryInteractor.getTracksHistory().toCollection(ArrayList())
 
                 if (binding.searchField.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) {
                     historyAdapter.tracks = historyTracks
@@ -159,7 +141,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.searchField.setOnFocusChangeListener { _, hasFocus ->
-            historyTracks = historyTracksRepository.getHistoryTracks()
+            historyTracks = searchHistoryInteractor.getTracksHistory().toCollection(ArrayList())
 
             if (hasFocus && binding.searchField.text.isEmpty() && historyTracks.isNotEmpty()) {
                 historyAdapter.tracks = historyTracks

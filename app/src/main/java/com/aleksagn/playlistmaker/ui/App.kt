@@ -4,10 +4,6 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.aleksagn.playlistmaker.util.Creator
 
-const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
-const val DAY_NIGHT_THEME_KEY = "key_for_day_night_theme"
-const val SEARCH_HISTORY_LIST_KEY = "key_for_search_history_list"
-
 class App : Application() {
     var darkTheme = false
 
@@ -16,10 +12,9 @@ class App : Application() {
 
         Creator.initApplication(this)
         Creator.initGson()
-        val settingsInteractor = Creator.provideSettingsInteractor()
+        val themeSettingInteractor = Creator.provideThemeSettingInteractor()
 
-        darkTheme = settingsInteractor.loadDarkThemeModeSetting()
-
+        darkTheme = themeSettingInteractor.getThemeSetting()
         switchTheme(darkTheme)
     }
 
@@ -27,17 +22,14 @@ class App : Application() {
         darkTheme = darkThemeEnabled
 
         AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
+            if (darkThemeEnabled) { AppCompatDelegate.MODE_NIGHT_YES }
+            else { AppCompatDelegate.MODE_NIGHT_NO }
         )
         saveTheme()
     }
 
     fun saveTheme() {
-        val settingsInteractor = Creator.provideSettingsInteractor()
-        settingsInteractor.saveDarkThemeModeSetting(darkTheme)
+        val themeSettingInteractor = Creator.provideThemeSettingInteractor()
+        themeSettingInteractor.saveThemeSetting(darkTheme)
     }
 }
