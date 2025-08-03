@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.aleksagn.playlistmaker.databinding.ActivityMainBinding
 import com.aleksagn.playlistmaker.ui.search.SearchActivity
-import com.aleksagn.playlistmaker.ui.settings.SettingsActivity
+import com.aleksagn.playlistmaker.ui.settings.activity.SettingsActivity
 import com.aleksagn.playlistmaker.ui.library.LibraryActivity
 
 class MainActivity : AppCompatActivity() {

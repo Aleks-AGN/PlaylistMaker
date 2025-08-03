@@ -28,8 +28,6 @@ class SearchActivity : AppCompatActivity() {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
-    private val tracksInteractor = Creator.provideTracksInteractor()
-    private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
@@ -41,12 +39,16 @@ class SearchActivity : AppCompatActivity() {
     private val mainThreadHandler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearch() }
 
+    private lateinit var tracksInteractor: TracksInteractor
     private lateinit var binding: ActivitySearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        tracksInteractor = Creator.provideTracksInteractor(this)
+        val searchHistoryInteractor = Creator.provideSearchHistoryInteractor(this)
 
         val onTrackClickListener = object : TrackAdapter.OnTrackClickListener {
             override fun onTrackClick(track: Track) {

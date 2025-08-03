@@ -10,9 +10,9 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        Creator.initApplication(this)
+//        Creator.initApplication(this)
         Creator.initGson()
-        val themeSettingInteractor = Creator.provideThemeSettingInteractor()
+        val themeSettingInteractor = Creator.provideThemeSettingInteractor(this)
 
         darkTheme = themeSettingInteractor.getThemeSetting()
         switchTheme(darkTheme)
@@ -29,7 +29,7 @@ class App : Application() {
     }
 
     fun saveTheme() {
-        val themeSettingInteractor = Creator.provideThemeSettingInteractor()
+        val themeSettingInteractor = Creator.provideThemeSettingInteractor(this)
         themeSettingInteractor.saveThemeSetting(darkTheme)
     }
 }

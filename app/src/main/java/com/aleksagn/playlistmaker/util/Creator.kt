@@ -1,7 +1,7 @@
 package com.aleksagn.playlistmaker.util
 
-import android.app.Application
 import android.content.Context
+import com.aleksagn.playlistmaker.data.impl.ExternalNavigatorImpl
 import com.aleksagn.playlistmaker.data.impl.PlayerRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.SearchHistoryRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.ThemeSettingRepositoryImpl
@@ -13,12 +13,14 @@ import com.aleksagn.playlistmaker.domain.api.PlayerInteractor
 import com.aleksagn.playlistmaker.domain.api.PlayerRepository
 import com.aleksagn.playlistmaker.domain.api.SearchHistoryInteractor
 import com.aleksagn.playlistmaker.domain.api.SearchHistoryRepository
+import com.aleksagn.playlistmaker.domain.api.SharingInteractor
 import com.aleksagn.playlistmaker.domain.api.ThemeSettingInteractor
 import com.aleksagn.playlistmaker.domain.api.ThemeSettingRepository
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
 import com.aleksagn.playlistmaker.domain.api.TracksRepository
 import com.aleksagn.playlistmaker.domain.impl.PlayerInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.SearchHistoryInteractorImpl
+import com.aleksagn.playlistmaker.domain.impl.SharingInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.ThemeSettingInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.TracksInteractorImpl
 import com.aleksagn.playlistmaker.domain.models.Track
@@ -26,16 +28,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 object Creator {
-    private lateinit var application: Application
+
     private lateinit var gson: Gson
-
-    fun initApplication(application: Application) {
-        this.application = application
-    }
-
-//    fun getApplication(): Application {
-//        return application
-//    }
 
     fun initGson() {
         this.gson = Gson()
@@ -49,8 +43,8 @@ object Creator {
         return TracksRepositoryImpl(RetrofitNetworkClient(context))
     }
 
-    fun provideTracksInteractor(): TracksInteractor {
-        return TracksInteractorImpl(getTracksRepository(application))
+    fun provideTracksInteractor(context: Context): TracksInteractor {
+        return TracksInteractorImpl(getTracksRepository(context))
     }
 
     private fun getSearchHistoryRepository(context: Context): SearchHistoryRepository {
@@ -62,8 +56,8 @@ object Creator {
         )
     }
 
-    fun provideSearchHistoryInteractor(): SearchHistoryInteractor {
-        return SearchHistoryInteractorImpl(getSearchHistoryRepository(application))
+    fun provideSearchHistoryInteractor(context: Context): SearchHistoryInteractor {
+        return SearchHistoryInteractorImpl(getSearchHistoryRepository(context))
     }
 
     private fun getThemeSettingRepository(context: Context): ThemeSettingRepository {
@@ -74,8 +68,12 @@ object Creator {
         )
     }
 
-    fun provideThemeSettingInteractor(): ThemeSettingInteractor {
-        return ThemeSettingInteractorImpl(getThemeSettingRepository(application))
+    fun provideThemeSettingInteractor(context: Context): ThemeSettingInteractor {
+        return ThemeSettingInteractorImpl(getThemeSettingRepository(context))
+    }
+
+    fun provideSharingInteractor(context: Context): SharingInteractor {
+        return SharingInteractorImpl(ExternalNavigatorImpl(context))
     }
 
     private fun getPlayerRepository(): PlayerRepository {
