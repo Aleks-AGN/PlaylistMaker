@@ -1,12 +1,12 @@
-package com.aleksagn.playlistmaker.ui.main
+package com.aleksagn.playlistmaker.ui.main.activity
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.aleksagn.playlistmaker.databinding.ActivityMainBinding
-import com.aleksagn.playlistmaker.ui.search.SearchActivity
+import com.aleksagn.playlistmaker.ui.search.activity.SearchActivity
 import com.aleksagn.playlistmaker.ui.settings.activity.SettingsActivity
-import com.aleksagn.playlistmaker.ui.library.LibraryActivity
+import com.aleksagn.playlistmaker.ui.library.activity.LibraryActivity
 
 class MainActivity : AppCompatActivity() {
 

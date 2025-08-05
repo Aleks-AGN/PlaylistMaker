@@ -2,15 +2,12 @@ package com.aleksagn.playlistmaker.util
 
 import android.content.Context
 import com.aleksagn.playlistmaker.data.impl.ExternalNavigatorImpl
-import com.aleksagn.playlistmaker.data.impl.PlayerRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.SearchHistoryRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.ThemeSettingRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.TracksRepositoryImpl
 import com.aleksagn.playlistmaker.data.network.RetrofitNetworkClient
 import com.aleksagn.playlistmaker.data.storage.CommonPrefsStorageClient
 import com.aleksagn.playlistmaker.data.storage.ThemePrefsStorageClient
-import com.aleksagn.playlistmaker.domain.api.PlayerInteractor
-import com.aleksagn.playlistmaker.domain.api.PlayerRepository
 import com.aleksagn.playlistmaker.domain.api.SearchHistoryInteractor
 import com.aleksagn.playlistmaker.domain.api.SearchHistoryRepository
 import com.aleksagn.playlistmaker.domain.api.SharingInteractor
@@ -18,7 +15,6 @@ import com.aleksagn.playlistmaker.domain.api.ThemeSettingInteractor
 import com.aleksagn.playlistmaker.domain.api.ThemeSettingRepository
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
 import com.aleksagn.playlistmaker.domain.api.TracksRepository
-import com.aleksagn.playlistmaker.domain.impl.PlayerInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.SearchHistoryInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.SharingInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.ThemeSettingInteractorImpl
@@ -74,13 +70,5 @@ object Creator {
 
     fun provideSharingInteractor(context: Context): SharingInteractor {
         return SharingInteractorImpl(ExternalNavigatorImpl(context))
-    }
-
-    private fun getPlayerRepository(): PlayerRepository {
-        return PlayerRepositoryImpl()
-    }
-
-    fun providePlayerInteractor(): PlayerInteractor {
-        return PlayerInteractorImpl(getPlayerRepository())
     }
 }

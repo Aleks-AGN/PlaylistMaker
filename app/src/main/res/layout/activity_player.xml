@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSecondaryVariant"
-    tools:context=".ui.player.PlayerActivity">
+    tools:context=".ui.player.activity.PlayerActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_border"

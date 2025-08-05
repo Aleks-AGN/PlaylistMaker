@@ -1,4 +1,4 @@
-package com.aleksagn.playlistmaker.ui.search
+package com.aleksagn.playlistmaker.ui.search.activity
 
 import android.content.Context
 import android.util.TypedValue

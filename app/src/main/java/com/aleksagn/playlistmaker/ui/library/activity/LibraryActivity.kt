@@ -1,4 +1,4 @@
-package com.aleksagn.playlistmaker.ui.library
+package com.aleksagn.playlistmaker.ui.library.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

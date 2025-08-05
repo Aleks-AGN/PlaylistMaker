@@ -1,4 +1,4 @@
-package com.aleksagn.playlistmaker.ui.search
+package com.aleksagn.playlistmaker.ui.search.activity
 
 import android.content.Context
 import android.content.Intent
@@ -15,7 +15,7 @@ import com.aleksagn.playlistmaker.util.Creator
 import com.aleksagn.playlistmaker.databinding.ActivitySearchBinding
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
-import com.aleksagn.playlistmaker.ui.player.PlayerActivity
+import com.aleksagn.playlistmaker.ui.player.activity.PlayerActivity
 
 class SearchActivity : AppCompatActivity() {
 
