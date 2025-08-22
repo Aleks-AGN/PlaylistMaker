@@ -4,9 +4,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.aleksagn.playlistmaker.domain.models.Track
 
-class TrackAdapter(
-    var tracks: List<Track>
-) : RecyclerView.Adapter<TrackViewHolder>() {
+class TrackAdapter() : RecyclerView.Adapter<TrackViewHolder>() {
+    var tracks = ArrayList<Track>()
 
     var onTrackClickListener: OnTrackClickListener? = null
 
