@@ -1,6 +1,5 @@
 package com.aleksagn.playlistmaker.ui.search.view_model
 
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -8,16 +7,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
 import com.aleksagn.playlistmaker.domain.models.Track
-import com.aleksagn.playlistmaker.ui.App
 import com.aleksagn.playlistmaker.util.Creator
 
-class SearchViewModel(private val context: Context) : ViewModel() {
+class SearchViewModel() : ViewModel() {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
@@ -25,20 +22,16 @@ class SearchViewModel(private val context: Context) : ViewModel() {
 
         fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val app = (this[APPLICATION_KEY] as App)
-                SearchViewModel(app)
+                SearchViewModel()
             }
         }
     }
 
-    private val tracksInteractor = Creator.provideTracksInteractor(context)
-    private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor(context)
+    private val tracksInteractor = Creator.provideTracksInteractor()
+    private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
 
     private val stateLiveData = MutableLiveData<SearchState>()
     fun observeState(): LiveData<SearchState> = stateLiveData
-
-    private val historyLiveData = MutableLiveData<List<Track>>()
-    fun observeHistory(): LiveData<List<Track>> = historyLiveData
 
     private val showToast = SingleLiveEvent<String?>()
     fun observeShowToast(): LiveData<String?> = showToast
@@ -48,17 +41,17 @@ class SearchViewModel(private val context: Context) : ViewModel() {
     private val handler = Handler(Looper.getMainLooper())
 
     init {
-        historyLiveData.value = searchHistoryInteractor.getTracksHistory()
+        stateLiveData.value = SearchState.History( tracks = searchHistoryInteractor.getTracksHistory() )
     }
 
     fun saveTrackToHistory(track: Track) {
         searchHistoryInteractor.saveTrackToHistory(track)
-        historyLiveData.value = searchHistoryInteractor.getTracksHistory()
+        stateLiveData.value = SearchState.History( tracks = searchHistoryInteractor.getTracksHistory() )
     }
 
     fun clearTracksHistory() {
         searchHistoryInteractor.clearTracksHistory()
-        historyLiveData.value = searchHistoryInteractor.getTracksHistory()
+        stateLiveData.value = SearchState.History( tracks = searchHistoryInteractor.getTracksHistory() )
     }
 
     fun searchQuick(changedText: String) {
@@ -102,7 +95,7 @@ class SearchViewModel(private val context: Context) : ViewModel() {
                                 errorMessage != null -> {
                                     renderState(
                                         SearchState.Error(
-                                            errorMessage = context.getString(R.string.net_error),
+                                            errorMessage = Creator.getApplication().getString(R.string.net_error),
                                         )
                                     )
                                     showToast.postValue(errorMessage)
@@ -111,7 +104,7 @@ class SearchViewModel(private val context: Context) : ViewModel() {
                                 tracks.isEmpty() -> {
                                     renderState(
                                         SearchState.Empty(
-                                            message = context.getString(R.string.empty_search),
+                                            message = Creator.getApplication().getString(R.string.empty_search),
                                         )
                                     )
                                 }

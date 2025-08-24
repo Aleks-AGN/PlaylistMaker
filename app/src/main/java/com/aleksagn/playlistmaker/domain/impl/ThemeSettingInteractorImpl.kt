@@ -7,11 +7,11 @@ class ThemeSettingInteractorImpl(
     private val repository: ThemeSettingRepository
 ) : ThemeSettingInteractor {
 
-    override fun saveThemeSetting(mode: Boolean) {
-        repository.saveThemeSetting(mode)
-    }
-
     override fun getThemeSetting(): Boolean {
         return repository.getThemeSetting().data!!
+    }
+
+    override fun switchTheme(darkThemeEnabled: Boolean) {
+        repository.switchTheme(darkThemeEnabled)
     }
 }

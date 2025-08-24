@@ -50,11 +50,6 @@ class SearchActivity : AppCompatActivity() {
             render(it)
         }
 
-        viewModel?.observeHistory()?.observe(this) {
-            historyAdapter.tracks = it.toCollection(ArrayList())
-            historyAdapter.notifyDataSetChanged()
-        }
-
         viewModel?.observeShowToast()?.observe(this) {
             showToast(it)
         }
@@ -172,6 +167,12 @@ class SearchActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
     }
 
+    fun showHistory(tracksList: List<Track>) {
+        historyAdapter.tracks.clear()
+        historyAdapter.tracks.addAll(tracksList)
+        historyAdapter.notifyDataSetChanged()
+    }
+
     fun showError(errorMessage: String) {
         binding.searchViewGroup.isVisible = true
         binding.trackList.isVisible = false
@@ -194,6 +195,7 @@ class SearchActivity : AppCompatActivity() {
         when (state) {
             is SearchState.Loading -> showLoading()
             is SearchState.Content -> showContent(state.tracks)
+            is SearchState.History -> showHistory(state.tracks)
             is SearchState.Error -> showError(state.errorMessage)
             is SearchState.Empty -> showEmpty(state.message)
         }

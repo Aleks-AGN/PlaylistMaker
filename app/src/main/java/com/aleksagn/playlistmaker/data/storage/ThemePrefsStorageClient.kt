@@ -7,10 +7,10 @@ import com.aleksagn.playlistmaker.data.StorageClient
 
 class ThemePrefsStorageClient(
     private val context: Context,
-    private val dataKey: String,
+    private val prefs: SharedPreferences,
 ) : StorageClient<Boolean> {
 
-    private val prefs: SharedPreferences = context.getSharedPreferences("PLAYLIST_MAKER", Context.MODE_PRIVATE)
+    private val dataKey = "DAY_NIGHT_THEME_KEY"
 
     override fun storeData(data: Boolean) {
         prefs.edit().putBoolean(dataKey, data).apply()

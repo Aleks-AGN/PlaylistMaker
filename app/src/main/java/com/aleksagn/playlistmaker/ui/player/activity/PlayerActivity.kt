@@ -10,9 +10,12 @@ import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.util.Creator
 import com.aleksagn.playlistmaker.databinding.ActivityPlayerBinding
 import com.aleksagn.playlistmaker.domain.models.Track
+import com.aleksagn.playlistmaker.ui.player.view_model.PlayerState
 import com.aleksagn.playlistmaker.ui.player.view_model.PlayerViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
 
@@ -32,12 +35,7 @@ class PlayerActivity : AppCompatActivity() {
             .get(PlayerViewModel::class.java)
 
         viewModel.observePlayerState().observe(this) {
-            enablePlayButton(it != PlayerViewModel.STATE_DEFAULT)
-            changeButtonView(it == PlayerViewModel.STATE_PLAYING)
-        }
-
-        viewModel.observeProgressTime().observe(this) {
-            binding.currentTrackTime.text = it
+            render(it)
         }
 
         binding.playerToolbar.setNavigationOnClickListener {
@@ -52,6 +50,7 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.onPauseButtonClicked()
         }
 
+        binding.currentTrackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
         binding.trackName.text = track.trackName
         binding.artistName.text = track.artistName
         binding.trackTime.text = track.getFormatTime()
@@ -79,18 +78,36 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.onPause()
     }
 
-    private fun enablePlayButton(isEnabled: Boolean) {
-        binding.btnPlay.isEnabled = isEnabled
+    fun render(state: PlayerState) {
+        when (state) {
+            is PlayerState.PreparePlayer -> showPrepare()
+            is PlayerState.StartPlayer -> showStart()
+            is PlayerState.PausePlayer -> showPause()
+            is PlayerState.PlayingPlayer -> showPlaying(state.progressTime)
+            is PlayerState.CompletePlayer -> showComplete()
+        }
+    }
+    private fun showPrepare() {
+        binding.btnPlay.isEnabled = true
     }
 
-    private fun changeButtonView(isPlaying: Boolean) {
-        if (isPlaying) {
-            binding.btnPlay.isVisible = false
-            binding.btnPause.isVisible = true
-        } else {
-            binding.btnPlay.isVisible = true
-            binding.btnPause.isVisible = false
-        }
+    private fun showStart() {
+        binding.btnPlay.isVisible = false
+        binding.btnPause.isVisible = true
+    }
+
+    private fun showPause() {
+        binding.btnPlay.isVisible = true
+        binding.btnPause.isVisible = false
+    }
+
+    private fun showPlaying(progressTime: String) {
+        binding.currentTrackTime.text = progressTime
+    }
+    private fun showComplete() {
+        binding.btnPlay.isVisible = true
+        binding.btnPause.isVisible = false
+        binding.currentTrackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
     }
 
     fun dpToPx(dp: Float, context: Context): Int {
