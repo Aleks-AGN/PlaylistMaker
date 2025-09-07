@@ -11,16 +11,17 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.aleksagn.playlistmaker.domain.api.PlayerInteractor
 import com.aleksagn.playlistmaker.util.Creator
 
-class PlayerViewModel(private val playerInteractor: PlayerInteractor, private val url: String) : ViewModel() {
+//class PlayerViewModel(private val playerInteractor: PlayerInteractor, private val url: String) : ViewModel() {
+class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewModel() {
 
     companion object {
         private const val DELAY = 250L
 
-        fun getFactory(trackUrl: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(Creator.providePlayerInteractor(), trackUrl)
-            }
-        }
+//        fun getFactory(trackUrl: String): ViewModelProvider.Factory = viewModelFactory {
+//            initializer {
+//                PlayerViewModel(Creator.providePlayerInteractor(), trackUrl)
+//            }
+//        }
     }
 
     private val playerStateLiveData = MutableLiveData<PlayerState>()
@@ -30,9 +31,9 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor, private va
 
     private val updatePlayTimerRunnable = updatePlayTimer()
 
-    init {
-        preparePlayer()
-    }
+//    init {
+//        preparePlayer()
+//    }
 
     override fun onCleared() {
         super.onCleared()
@@ -52,7 +53,7 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor, private va
         pausePlayer()
     }
 
-    private fun preparePlayer() {
+    fun preparePlayer(url: String) {
         val onPrepare = {
             playerStateLiveData.postValue(PlayerState.PreparePlayer)
         }
