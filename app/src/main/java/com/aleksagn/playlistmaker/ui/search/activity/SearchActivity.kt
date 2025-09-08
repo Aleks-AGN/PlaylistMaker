@@ -12,8 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
-import com.aleksagn.playlistmaker.util.Creator
 import com.aleksagn.playlistmaker.databinding.ActivitySearchBinding
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.ui.player.activity.PlayerActivity
@@ -29,7 +27,6 @@ class SearchActivity : AppCompatActivity() {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
-//    private var viewModel: SearchViewModel? = null
     private val viewModel: SearchViewModel by viewModel()
 
     private var textWatcher: TextWatcher? = null
@@ -47,9 +44,6 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        viewModel = ViewModelProvider(this, SearchViewModel.getFactory())
-//            .get(SearchViewModel::class.java)
-
         viewModel.observeState().observe(this) {
             render(it)
         }
@@ -64,7 +58,6 @@ class SearchActivity : AppCompatActivity() {
                     viewModel.saveTrackToHistory(track)
                     val playerIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
                     val json: Gson by inject()
-//                    val jsonTrack = Creator.getGson().toJson(track)
                     val jsonTrack = json.toJson(track)
                     playerIntent.putExtra("track", jsonTrack)
                     startActivity(playerIntent)

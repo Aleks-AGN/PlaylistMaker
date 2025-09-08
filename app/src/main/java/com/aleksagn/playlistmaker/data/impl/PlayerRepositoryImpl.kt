@@ -6,9 +6,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerRepositoryImpl(private var mediaPlayer: MediaPlayer) : PlayerRepository {
-//class PlayerRepositoryImpl() : PlayerRepository {
-
-//    private var mediaPlayer = MediaPlayer()
 
     enum class PlayerState {
         DEFAULT,
@@ -19,14 +16,10 @@ class PlayerRepositoryImpl(private var mediaPlayer: MediaPlayer) : PlayerReposit
 
     private var playerState = PlayerState.DEFAULT
 
-//    override fun preparePlayer(previewUrl: String, onPrepare: () -> Unit, onComplete: () -> Unit) {
-//        mediaPlayer.setDataSource(url)
-//        mediaPlayer.prepareAsync()
-//        mediaPlayer.setOnPreparedListener { onPrepare() }
-//        mediaPlayer.setOnCompletionListener { onComplete() }
-//    }
     override fun preparePlayer(previewUrl: String, onPrepare: () -> Unit, onComplete: () -> Unit) {
-        releasePlayer()
+        mediaPlayer.reset()
+        mediaPlayer.stop()
+
         mediaPlayer = MediaPlayer().apply {
             setDataSource(previewUrl)
             prepareAsync()
@@ -38,7 +31,6 @@ class PlayerRepositoryImpl(private var mediaPlayer: MediaPlayer) : PlayerReposit
                 onComplete()
                 playerState = PlayerState.PREPARED
             }
-            setOnErrorListener { _, _, _ -> release(); true }
         }
     }
 
