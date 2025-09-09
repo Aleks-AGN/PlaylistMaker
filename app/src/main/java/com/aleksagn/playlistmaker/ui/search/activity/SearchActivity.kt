@@ -12,13 +12,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
-import com.aleksagn.playlistmaker.util.Creator
 import com.aleksagn.playlistmaker.databinding.ActivitySearchBinding
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.ui.player.activity.PlayerActivity
 import com.aleksagn.playlistmaker.ui.search.view_model.SearchState
 import com.aleksagn.playlistmaker.ui.search.view_model.SearchViewModel
+import com.google.gson.Gson
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -26,7 +27,7 @@ class SearchActivity : AppCompatActivity() {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
-    private var viewModel: SearchViewModel? = null
+    private val viewModel: SearchViewModel by viewModel()
 
     private var textWatcher: TextWatcher? = null
 
@@ -43,23 +44,21 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this, SearchViewModel.getFactory())
-            .get(SearchViewModel::class.java)
-
-        viewModel?.observeState()?.observe(this) {
+        viewModel.observeState().observe(this) {
             render(it)
         }
 
-        viewModel?.observeShowToast()?.observe(this) {
+        viewModel.observeShowToast().observe(this) {
             showToast(it)
         }
 
         val onTrackClickListener = object : TrackAdapter.OnTrackClickListener {
             override fun onTrackClick(track: Track) {
                 if (clickDebounce()) {
-                    viewModel?.saveTrackToHistory(track)
+                    viewModel.saveTrackToHistory(track)
                     val playerIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
-                    val jsonTrack = Creator.getGson().toJson(track)
+                    val json: Gson by inject()
+                    val jsonTrack = json.toJson(track)
                     playerIntent.putExtra("track", jsonTrack)
                     startActivity(playerIntent)
                 }
@@ -89,17 +88,17 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.btnClearSearchHistory.setOnClickListener {
-            viewModel?.clearTracksHistory()
+            viewModel.clearTracksHistory()
             binding.historySearchViewGroup.isVisible = false
         }
 
         binding.btnUpdate.setOnClickListener {
-            viewModel?.searchQuick(binding.searchField.text.toString())
+            viewModel.searchQuick(binding.searchField.text.toString())
         }
 
         binding.searchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                viewModel?.searchQuick(binding.searchField.text.toString())
+                viewModel.searchQuick(binding.searchField.text.toString())
                 true
             }
             false
@@ -122,7 +121,7 @@ class SearchActivity : AppCompatActivity() {
                 } else if (binding.searchField.hasFocus() && s?.isEmpty() == true) {
                     showContent(emptyList())
                 }
-                viewModel?.searchDebounce(changedText = s?.toString() ?: "")
+                viewModel.searchDebounce(changedText = s?.toString() ?: "")
             }
         }
         textWatcher?.let { binding.searchField.addTextChangedListener(it) }

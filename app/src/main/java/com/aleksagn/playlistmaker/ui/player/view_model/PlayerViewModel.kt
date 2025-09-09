@@ -5,22 +5,12 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.aleksagn.playlistmaker.domain.api.PlayerInteractor
-import com.aleksagn.playlistmaker.util.Creator
 
-class PlayerViewModel(private val playerInteractor: PlayerInteractor, private val url: String) : ViewModel() {
+class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewModel() {
 
     companion object {
         private const val DELAY = 250L
-
-        fun getFactory(trackUrl: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(Creator.providePlayerInteractor(), trackUrl)
-            }
-        }
     }
 
     private val playerStateLiveData = MutableLiveData<PlayerState>()
@@ -29,10 +19,6 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor, private va
     private var handler = Handler(Looper.getMainLooper())
 
     private val updatePlayTimerRunnable = updatePlayTimer()
-
-    init {
-        preparePlayer()
-    }
 
     override fun onCleared() {
         super.onCleared()
@@ -52,7 +38,7 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor, private va
         pausePlayer()
     }
 
-    private fun preparePlayer() {
+    fun preparePlayer(url: String) {
         val onPrepare = {
             playerStateLiveData.postValue(PlayerState.PreparePlayer)
         }

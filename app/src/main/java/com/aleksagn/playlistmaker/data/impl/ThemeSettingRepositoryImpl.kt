@@ -9,7 +9,7 @@ class ThemeSettingRepositoryImpl(
     private val storage: ThemePrefsStorageClient): ThemeSettingRepository {
 
     override fun getThemeSetting(): Resource<Boolean> {
-        val mode = storage.getData()
+        val mode = storage.getData()!!
         return Resource.Success(mode)
     }
 

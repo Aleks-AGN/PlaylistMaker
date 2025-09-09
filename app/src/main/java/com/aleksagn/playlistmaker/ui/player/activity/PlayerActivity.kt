@@ -5,23 +5,25 @@ import android.os.Bundle
 import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.aleksagn.playlistmaker.R
-import com.aleksagn.playlistmaker.util.Creator
 import com.aleksagn.playlistmaker.databinding.ActivityPlayerBinding
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.ui.player.view_model.PlayerState
 import com.aleksagn.playlistmaker.ui.player.view_model.PlayerViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.gson.Gson
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: PlayerViewModel
-
     private lateinit var binding: ActivityPlayerBinding
+
+    private val viewModel: PlayerViewModel by viewModel()
+    private val gson: Gson by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +31,10 @@ class PlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val jsonTrack = intent.getStringExtra("track").toString()
-        val track = Creator.getGson().fromJson(jsonTrack, Track::class.java)
 
-        viewModel = ViewModelProvider(this, PlayerViewModel.getFactory(track.previewUrl))
-            .get(PlayerViewModel::class.java)
+        val track = gson.fromJson(jsonTrack, Track::class.java)
+
+        viewModel.preparePlayer(track.previewUrl)
 
         viewModel.observePlayerState().observe(this) {
             render(it)
@@ -111,8 +113,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     fun dpToPx(dp: Float, context: Context): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
             dp,
             context.resources.displayMetrics).toInt()
     }
