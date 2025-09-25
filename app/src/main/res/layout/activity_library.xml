@@ -3,16 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    tools:context=".ui.library.activity.LibraryActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.library.activity.LibraryActivity">
+    android:orientation="vertical"
+    android:background="?attr/colorSecondaryVariant"
+    android:paddingBottom="@dimen/big_padding_1">
 
-    <TextView
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/library_toolbar"
+        app:titleTextAppearance="@style/LibraryToolbar.Title"
+        style="@style/LibraryToolbar" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/library"
-        android:layout_gravity="center"
-        android:gravity="center" />
+        android:layout_marginLeft="@dimen/medium_margin"
+        android:layout_marginRight="@dimen/medium_margin"
+        style="@style/LibraryTabLayout"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>
