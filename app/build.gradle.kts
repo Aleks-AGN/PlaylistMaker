@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.glide)
     implementation(libs.insert.koin.koin.android)
     annotationProcessor(libs.compiler)

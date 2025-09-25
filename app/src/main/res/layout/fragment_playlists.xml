@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.library.activity.PlaylistsFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/colorSecondaryVariant"
+    android:paddingBottom="@dimen/big_padding_1">
+
+    <LinearLayout
+        android:id="@+id/placeholder_nothing_found"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btn_new_playlist"
+            android:text="@string/btn_new_playlist"
+            android:layout_marginBottom="@dimen/media_margin_1"
+            style="@style/NewPlaylistButton" />
+
+        <ImageView style="@style/EmptySearchIcon" />
+
+        <TextView
+            android:text="@string/empty_playlists"
+            style="@style/SearchText" />
+    </LinearLayout>
+
+</LinearLayout>

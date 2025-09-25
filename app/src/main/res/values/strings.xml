@@ -15,7 +15,6 @@
     <string name="update_search">Обновить</string>
     <string name="search_history">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
-    <string name="library">Медиатека</string>
     <string name="settings">Настройки</string>
     <string name="dark_theme">Темная тема</string>
     <string name="share_app">Поделиться приложением</string>
@@ -26,4 +25,10 @@
     <string name="support_email_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="terms_of_use">Пользовательское соглашение</string>
     <string name="terms_of_use_url">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="library">Медиатека</string>
+    <string name="favorites">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="empty_media_library">Ваша медиатека пуста</string>
+    <string name="empty_playlists">Вы не создали\nни одного плейлиста</string>
+    <string name="btn_new_playlist">Новый плейлист</string>
 </resources>

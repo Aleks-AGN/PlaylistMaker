@@ -325,4 +325,49 @@
         <item name="android:singleLine">true</item>
     </style>
 
+    <style name="LibraryToolbar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="title">@string/library</item>
+        <item name="titleTextColor">@color/yp_white</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="navigationIcon">@drawable/ic_arrow_back_white</item>
+    </style>
+
+    <style name="LibraryToolbar.Title">
+        <item name="android:textSize">@dimen/title_text_size</item>
+    </style>
+
+    <style name="LibraryTabLayout">
+        <item name="android:background">@color/yp_black</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabIndicatorColor">@color/yp_white</item>
+        <item name="tabTextAppearance">@style/LibraryTabTextAppearance</item>
+        <item name="tabSelectedTextColor">@color/yp_white</item>
+        <item name="tabTextColor">@color/yp_white</item>
+    </style>
+
+    <style name="LibraryTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/library_tab_text_size</item>
+        <item name="android:textColor">@color/yp_white</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="NewPlaylistButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/big_margin_1</item>
+        <item name="android:backgroundTint">@color/yp_white</item>
+        <item name="android:gravity">center_horizontal|center_vertical</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">@dimen/upd_btn_text_size</item>
+        <item name="cornerRadius">@dimen/upd_btn_radius</item>
+    </style>
+
 </resources>
