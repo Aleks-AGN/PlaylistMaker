@@ -8,14 +8,16 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 class LibraryViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
     : FragmentStateAdapter(fragmentManager, lifecycle) {
 
+    private val dataKey = "DATA_KEY"
+
     override fun getItemCount(): Int {
         return 2
     }
 
     override fun createFragment(position: Int): Fragment {
         return when(position) {
-            0 -> FavoritesFragment.newInstance("key")
-            else -> PlaylistsFragment.newInstance("key")
+            0 -> FavoritesFragment.newInstance(dataKey)
+            else -> PlaylistsFragment.newInstance(dataKey)
         }
     }
 }
