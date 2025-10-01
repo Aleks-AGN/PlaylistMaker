@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.search.SearchFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/colorSecondaryVariant"
+    android:paddingBottom="@dimen/big_padding_1">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/search_toolbar"
+        app:titleTextAppearance="@style/SearchToolbar.Title"
+        style="@style/SearchToolbar" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/medium_padding_1"
+        android:paddingHorizontal="@dimen/medium_padding_2">
+
+        <EditText
+            android:id="@+id/search_field"
+            android:hint="@string/search"
+            style="@style/SearchField" />
+
+        <ImageView
+            android:id="@+id/btn_clear"
+            android:visibility="gone"
+            style="@style/ClearButton" />
+    </FrameLayout>
+
+    <ProgressBar android:id="@+id/progress_bar"
+        android:layout_width="@dimen/progress_bar_width"
+        android:layout_height="@dimen/progress_bar_height"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/yp_blue"
+        android:layout_marginTop="@dimen/big_margin_3"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/search_view_group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/track_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/medium_margin"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <LinearLayout
+            android:id="@+id/placeholder_nothing_found"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView style="@style/EmptySearchIcon" />
+
+            <TextView
+                android:text="@string/empty_search"
+                style="@style/SearchText" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/placeholder_net_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView style="@style/NetErrorIcon" />
+
+            <TextView
+                android:text="@string/net_error"
+                style="@style/SearchText" />
+
+            <Button
+                android:id="@+id/btn_update"
+                android:text="@string/update_search"
+                style="@style/UpdateButton" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/history_search_view_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="@string/search_history"
+            style="@style/HistoryText" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/history_track_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/medium_margin"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <Button
+            android:id="@+id/btn_clear_search_history"
+            android:text="@string/clear_history"
+            style="@style/ClearHistoryButton" />
+    </LinearLayout>
+
+</LinearLayout>
