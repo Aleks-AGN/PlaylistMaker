@@ -3,14 +3,15 @@ package com.aleksagn.playlistmaker.presentation.search
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.domain.api.SearchHistoryInteractor
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
 import com.aleksagn.playlistmaker.domain.models.Track
+import com.aleksagn.playlistmaker.util.debounce
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
@@ -20,7 +21,6 @@ class SearchViewModel(
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
 
     private val stateLiveData = MutableLiveData<SearchState>()
@@ -52,22 +52,15 @@ class SearchViewModel(
         searchRequest(changedText)
     }
 
+    private val trackSearchDebounce = debounce<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true) { changedText ->
+        searchRequest(changedText)
+    }
+
     fun searchDebounce(changedText: String) {
-        if (latestSearchText == changedText) {
-            return
+        if (latestSearchText != changedText) {
+            latestSearchText = changedText
+            trackSearchDebounce(changedText)
         }
-
-        this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable { searchRequest(changedText) }
-
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
     }
 
     private fun searchRequest(newSearchText: String) {
@@ -118,10 +111,5 @@ class SearchViewModel(
 
     private fun renderState(state: SearchState) {
         stateLiveData.postValue(state)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 }
