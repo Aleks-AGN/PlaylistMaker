@@ -1,9 +1,12 @@
 package com.aleksagn.playlistmaker.presentation.player
 
-sealed interface  PlayerState {
-    object PreparePlayer : PlayerState
-    object StartPlayer : PlayerState
-    object PausePlayer : PlayerState
-    data class PlayingPlayer(val progressTime: String) : PlayerState
-    object CompletePlayer : PlayerState
+sealed class PlayerState(val isPlayButtonEnabled: Boolean, val isPlayButtonVisible: Boolean, val progress: String) {
+
+    class Default : PlayerState(false, true, "00:00")
+
+    class Prepared : PlayerState(true, true, "00:00")
+
+    class Playing(progress: String) : PlayerState(true, false, progress)
+
+    class Paused(progress: String) : PlayerState(true, true, progress)
 }

@@ -55,4 +55,8 @@ class PlayerRepositoryImpl(private var mediaPlayer: MediaPlayer) : PlayerReposit
     override fun releasePlayer() {
         mediaPlayer.release()
     }
+
+    override fun isPlaying(): Boolean {
+        return mediaPlayer.isPlaying
+    }
 }
