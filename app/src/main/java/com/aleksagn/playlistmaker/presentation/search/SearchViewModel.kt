@@ -1,8 +1,6 @@
 package com.aleksagn.playlistmaker.presentation.search
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +10,7 @@ import com.aleksagn.playlistmaker.domain.api.SearchHistoryInteractor
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.util.debounce
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
@@ -30,8 +29,6 @@ class SearchViewModel(
     fun observeShowToast(): LiveData<String?> = showToast
 
     private var latestSearchText: String? = null
-
-    private val handler = Handler(Looper.getMainLooper())
 
     init {
         stateLiveData.value = SearchState.History( tracks = searchHistoryInteractor.getTracksHistory() )
@@ -65,47 +62,38 @@ class SearchViewModel(
 
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
-            renderState(
-                SearchState.Loading
-            )
 
-            tracksInteractor.searchTracks(newSearchText, object : TracksInteractor.TracksConsumer {
-                    override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                        handler.post {
-                            val tracks = mutableListOf<Track>()
-                            if (foundTracks != null) {
-                                tracks.addAll(foundTracks)
-                            }
+            renderState(SearchState.Loading)
 
-                            when {
-                                errorMessage != null -> {
-                                    renderState(
-                                        SearchState.Error(
-                                            errorMessage = context.getString(R.string.net_error),
-                                        )
-                                    )
-                                    showToast.postValue(errorMessage)
-                                }
-
-                                tracks.isEmpty() -> {
-                                    renderState(
-                                        SearchState.Empty(
-                                            message = context.getString(R.string.empty_search),
-                                        )
-                                    )
-                                }
-
-                                else -> {
-                                    renderState(
-                                        SearchState.Content(
-                                            tracks = tracks,
-                                        )
-                                    )
-                                }
-                            }
-                        }
+            viewModelScope.launch {
+                tracksInteractor
+                    .searchTracks(newSearchText)
+                    .collect { pair ->
+                        processResult(pair.first, pair.second)
                     }
-                })
+            }
+        }
+    }
+
+    private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
+        val tracks = mutableListOf<Track>()
+        if (foundTracks != null) {
+            tracks.addAll(foundTracks)
+        }
+
+        when {
+            errorMessage != null -> {
+                renderState(SearchState.Error(errorMessage = context.getString(R.string.net_error)))
+                showToast.postValue(errorMessage)
+            }
+
+            tracks.isEmpty() -> {
+                renderState(SearchState.Empty(message = context.getString(R.string.empty_search)))
+            }
+
+            else -> {
+                renderState(SearchState.Content(tracks = tracks))
+            }
         }
     }
 
