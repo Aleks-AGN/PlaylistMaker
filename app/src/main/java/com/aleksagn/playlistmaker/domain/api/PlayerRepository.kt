@@ -6,4 +6,5 @@ interface PlayerRepository {
     fun pausePlayer()
     fun getCurrentPlayTime(): String
     fun releasePlayer()
+    fun isPlaying(): Boolean
 }

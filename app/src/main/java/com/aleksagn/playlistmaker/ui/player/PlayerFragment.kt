@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.databinding.FragmentPlayerBinding
 import com.aleksagn.playlistmaker.domain.models.Track
-import com.aleksagn.playlistmaker.presentation.player.PlayerState
 import com.aleksagn.playlistmaker.presentation.player.PlayerViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -58,7 +57,10 @@ class PlayerFragment : Fragment() {
         viewModel.preparePlayer(track.previewUrl)
 
         viewModel.observePlayerState().observe(viewLifecycleOwner) {
-            render(it)
+            binding.btnPlay.isEnabled = it.isPlayButtonEnabled
+            binding.btnPlay.isVisible = it.isPlayButtonVisible
+            binding.btnPause.isVisible = !it.isPlayButtonVisible
+            binding.currentTrackTime.text = it.progress
         }
 
         binding.playerToolbar.setNavigationOnClickListener {
@@ -99,38 +101,6 @@ class PlayerFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
-    }
-
-    fun render(state: PlayerState) {
-        when (state) {
-            is PlayerState.PreparePlayer -> showPrepare()
-            is PlayerState.StartPlayer -> showStart()
-            is PlayerState.PausePlayer -> showPause()
-            is PlayerState.PlayingPlayer -> showPlaying(state.progressTime)
-            is PlayerState.CompletePlayer -> showComplete()
-        }
-    }
-    private fun showPrepare() {
-        binding.btnPlay.isEnabled = true
-    }
-
-    private fun showStart() {
-        binding.btnPlay.isVisible = false
-        binding.btnPause.isVisible = true
-    }
-
-    private fun showPause() {
-        binding.btnPlay.isVisible = true
-        binding.btnPause.isVisible = false
-    }
-
-    private fun showPlaying(progressTime: String) {
-        binding.currentTrackTime.text = progressTime
-    }
-    private fun showComplete() {
-        binding.btnPlay.isVisible = true
-        binding.btnPause.isVisible = false
-        binding.currentTrackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
     }
 
     fun dpToPx(dp: Float, context: Context): Int {

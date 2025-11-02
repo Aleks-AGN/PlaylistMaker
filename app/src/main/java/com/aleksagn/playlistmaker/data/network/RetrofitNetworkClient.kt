@@ -9,7 +9,7 @@ import com.aleksagn.playlistmaker.data.dto.TracksSearchRequest
 
 class RetrofitNetworkClient(private val iTunesApiService: ITunesApiService, private val context: Context) : NetworkClient {
 
-    override fun doRequest(dto: Any): NetworkResponse {
+    override suspend fun doRequest(dto: Any): NetworkResponse {
         if (isConnected() == false) {
             return NetworkResponse().apply { resultCode = -1 }
         }
@@ -17,12 +17,11 @@ class RetrofitNetworkClient(private val iTunesApiService: ITunesApiService, priv
             return NetworkResponse().apply { resultCode = 400 }
         }
 
-        val response = iTunesApiService.searchTracks(dto.expression).execute()
-        val body = response.body()
-        return if (body != null) {
-            body.apply { resultCode = response.code() }
-        } else {
-            NetworkResponse().apply { resultCode = response.code() }
+        return try {
+            val response = iTunesApiService.searchTracks(dto.expression)
+            response.apply { resultCode = 200 }
+        } catch (e: Throwable) {
+            NetworkResponse().apply { resultCode = 500 }
         }
     }
 

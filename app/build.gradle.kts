@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.glide)
     implementation(libs.insert.koin.koin.android)
+    implementation(libs.kotlinx.coroutines.android)
     annotationProcessor(libs.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

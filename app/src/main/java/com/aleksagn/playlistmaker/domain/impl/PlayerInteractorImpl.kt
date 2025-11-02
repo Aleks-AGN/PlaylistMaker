@@ -23,4 +23,8 @@ class PlayerInteractorImpl(private val playerRepository: PlayerRepository) : Pla
     override fun releasePlayer() {
         playerRepository.releasePlayer()
     }
+
+    override fun isPlaying(): Boolean {
+        return playerRepository.isPlaying()
+    }
 }
