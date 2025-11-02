@@ -6,8 +6,6 @@ import android.net.NetworkCapabilities
 import com.aleksagn.playlistmaker.data.NetworkClient
 import com.aleksagn.playlistmaker.data.dto.NetworkResponse
 import com.aleksagn.playlistmaker.data.dto.TracksSearchRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(private val iTunesApiService: ITunesApiService, private val context: Context) : NetworkClient {
 
@@ -19,13 +17,11 @@ class RetrofitNetworkClient(private val iTunesApiService: ITunesApiService, priv
             return NetworkResponse().apply { resultCode = 400 }
         }
 
-        return withContext(Dispatchers.IO) {
-            try {
-                val response = iTunesApiService.searchTracks(dto.expression)
-                response.apply { resultCode = 200 }
-            } catch (e: Throwable) {
-                NetworkResponse().apply { resultCode = 500 }
-            }
+        return try {
+            val response = iTunesApiService.searchTracks(dto.expression)
+            response.apply { resultCode = 200 }
+        } catch (e: Throwable) {
+            NetworkResponse().apply { resultCode = 500 }
         }
     }
 
