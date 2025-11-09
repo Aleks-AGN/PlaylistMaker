@@ -1,6 +1,7 @@
 package com.aleksagn.playlistmaker.data.impl
 
 import com.aleksagn.playlistmaker.data.NetworkClient
+import com.aleksagn.playlistmaker.data.db.AppDatabase
 import com.aleksagn.playlistmaker.data.dto.TracksSearchRequest
 import com.aleksagn.playlistmaker.data.dto.TracksSearchResponse
 import com.aleksagn.playlistmaker.domain.api.TracksRepository
@@ -9,7 +10,10 @@ import com.aleksagn.playlistmaker.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+class TracksRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val appDatabase: AppDatabase
+) : TracksRepository {
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
 
@@ -39,6 +43,10 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                             previewUrl = dto.previewUrl
                         )
                     }
+                }
+                val favoriteTracksIds = appDatabase.trackDao().getFavoriteTracksIds()
+                data.forEach {
+                    if (favoriteTracksIds.contains(it.trackId)) { it.isFavorite = true }
                 }
                 emit(Resource.Success(data))
             }

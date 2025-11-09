@@ -1,10 +1,12 @@
-package com.aleksagn.playlistmaker.domain.models
+package com.aleksagn.playlistmaker.data.db.entity
 
-import java.text.SimpleDateFormat
-import java.util.Locale
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-data class Track(
-    val trackId: Int, // Идентификатор трека
+@Entity(tableName = "favorite_tracks")
+data class TrackEntity(
+    @PrimaryKey
+    val trackId: Int, // Идентификатор трека (первичный ключ)
     val trackName: String, // Название композиции
     val artistName: String, // Имя исполнителя
     val trackTimeMillis: Long, // Продолжительность трека в миллисекундах
@@ -14,9 +16,5 @@ data class Track(
     val primaryGenreName: String, // Жанр трека
     val country: String, // Страна исполнителя
     val previewUrl: String, // Ссылка на отрывок трека
-    var isFavorite: Boolean = false // Признак добавления трека в Избранное
-) {
-    fun getFormatTime() = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
-
-    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
-}
+    val additionTime : Long// Время добавления трека
+)

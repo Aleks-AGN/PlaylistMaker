@@ -4,22 +4,31 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aleksagn.playlistmaker.domain.api.FavoriteTracksInteractor
 import com.aleksagn.playlistmaker.domain.api.PlayerInteractor
+import com.aleksagn.playlistmaker.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewModel() {
+class PlayerViewModel(
+    private val playerInteractor: PlayerInteractor,
+    private val favoriteTracksInteractor: FavoriteTracksInteractor
+) : ViewModel() {
 
     companion object {
         private const val DELAY = 300L
     }
 
     private var timerJob: Job? = null
+    private var track: Track? = null
 
     private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
+
+    private val isFavoriteLiveData = MutableLiveData(false)
+    val observeIsFavorite: LiveData<Boolean> = isFavoriteLiveData
 
     override fun onCleared() {
         super.onCleared()
@@ -54,7 +63,32 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
         }
     }
 
-    fun preparePlayer(url: String) {
+    fun onFavoriteButtonClicked() {
+
+        if (isFavoriteLiveData.value == true) {
+            viewModelScope.launch {
+                favoriteTracksInteractor.deleteFavoriteTrackById(track!!.trackId)
+            }
+            track!!.isFavorite = false
+        } else {
+            viewModelScope.launch {
+                favoriteTracksInteractor.insertFavoriteTrack(track!!)
+            }
+            track!!.isFavorite = true
+        }
+        isFavoriteLiveData.postValue(track!!.isFavorite)
+    }
+
+    fun preparePlayer(currentTrack: Track) {
+        track = currentTrack
+
+        viewModelScope.launch {
+            favoriteTracksInteractor.observeFavoriteTrackById(currentTrack.trackId).collect {
+                isFavoriteLiveData.postValue(it)
+                track!!.isFavorite = it
+            }
+        }
+
         val onPrepare = {
             playerStateLiveData.postValue(PlayerState.Prepared())
         }
@@ -64,7 +98,7 @@ class PlayerViewModel(private val playerInteractor: PlayerInteractor) : ViewMode
             playerStateLiveData.postValue(PlayerState.Prepared())
         }
 
-        playerInteractor.preparePlayer(url, onPrepare, onComplete)
+        playerInteractor.preparePlayer(currentTrack.previewUrl, onPrepare, onComplete)
     }
 
     private fun startPlayer() {

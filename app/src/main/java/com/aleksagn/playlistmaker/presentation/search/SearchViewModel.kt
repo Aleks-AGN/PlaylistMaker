@@ -31,17 +31,35 @@ class SearchViewModel(
     private var latestSearchText: String? = null
 
     init {
-        stateLiveData.value = SearchState.History( tracks = searchHistoryInteractor.getTracksHistory() )
+        viewModelScope.launch {
+            searchHistoryInteractor
+                .getTracksHistory()
+                .collect { tracks ->
+                    stateLiveData.value = SearchState.History(tracks)
+                }
+        }
     }
 
     fun saveTrackToHistory(track: Track) {
         searchHistoryInteractor.saveTrackToHistory(track)
-        stateLiveData.value = SearchState.History( tracks = searchHistoryInteractor.getTracksHistory() )
+        viewModelScope.launch {
+            searchHistoryInteractor
+                .getTracksHistory()
+                .collect { tracks ->
+                    stateLiveData.value = SearchState.History(tracks)
+                }
+        }
     }
 
     fun clearTracksHistory() {
         searchHistoryInteractor.clearTracksHistory()
-        stateLiveData.value = SearchState.History( tracks = searchHistoryInteractor.getTracksHistory() )
+        viewModelScope.launch {
+            searchHistoryInteractor
+                .getTracksHistory()
+                .collect { tracks ->
+                    stateLiveData.value = SearchState.History(tracks)
+                }
+        }
     }
 
     fun searchQuick(changedText: String) {

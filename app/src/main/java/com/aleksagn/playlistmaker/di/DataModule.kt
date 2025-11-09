@@ -3,8 +3,10 @@ package com.aleksagn.playlistmaker.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.MediaPlayer
+import androidx.room.Room
 import com.aleksagn.playlistmaker.data.NetworkClient
 import com.aleksagn.playlistmaker.data.StorageClient
+import com.aleksagn.playlistmaker.data.db.AppDatabase
 import com.aleksagn.playlistmaker.data.network.ITunesApiService
 import com.aleksagn.playlistmaker.data.network.RetrofitNetworkClient
 import com.aleksagn.playlistmaker.data.storage.CommonPrefsStorageClient
@@ -50,5 +52,10 @@ val dataModule = module {
 
     single {
         ThemePrefsStorageClient(androidContext(), get())
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
     }
 }

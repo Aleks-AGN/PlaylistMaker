@@ -103,6 +103,7 @@
         style="@style/FavoriteBorderButton"
         android:background="?attr/colorSecondaryVariant"
         android:layout_marginEnd="8dp"
+        app:srcCompat="@drawable/ic_btn_favorite_border_inactive"
         app:layout_constraintEnd_toStartOf="@id/right_border"
         app:layout_constraintTop_toTopOf="@id/btn_queue"
         app:layout_constraintBottom_toBottomOf="@id/btn_queue" />
