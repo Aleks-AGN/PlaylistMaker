@@ -37,7 +37,7 @@ class SearchHistoryRepositoryImpl(
         val tracks = storage.getData() ?: listOf()
         val favoriteTracksIds = appDatabase.trackDao().getFavoriteTracksIds()
         tracks.forEach {
-            when { favoriteTracksIds.contains(it.trackId) -> it.isFavorite = true }
+            if (favoriteTracksIds.contains(it.trackId)) { it.isFavorite = true }
         }
         emit(Resource.Success(tracks))
     }
