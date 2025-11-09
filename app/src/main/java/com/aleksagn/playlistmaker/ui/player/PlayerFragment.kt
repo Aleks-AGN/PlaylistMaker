@@ -54,13 +54,21 @@ class PlayerFragment : Fragment() {
 
         val track = gson.fromJson(jsonTrack, Track::class.java)
 
-        viewModel.preparePlayer(track.previewUrl)
+        viewModel.preparePlayer(track)
 
         viewModel.observePlayerState().observe(viewLifecycleOwner) {
             binding.btnPlay.isEnabled = it.isPlayButtonEnabled
             binding.btnPlay.isVisible = it.isPlayButtonVisible
             binding.btnPause.isVisible = !it.isPlayButtonVisible
             binding.currentTrackTime.text = it.progress
+
+        }
+
+        viewModel.observeIsFavorite.observe(viewLifecycleOwner) { isFavorite ->
+            if (isFavorite)
+                binding.btnFavoriteBorder.setImageResource(R.drawable.ic_btn_favorite_border_active)
+            else
+                binding.btnFavoriteBorder.setImageResource(R.drawable.ic_btn_favorite_border_inactive)
         }
 
         binding.playerToolbar.setNavigationOnClickListener {
@@ -73,6 +81,10 @@ class PlayerFragment : Fragment() {
 
         binding.btnPause.setOnClickListener {
             viewModel.onPauseButtonClicked()
+        }
+
+        binding.btnFavoriteBorder.setOnClickListener {
+            viewModel.onFavoriteButtonClicked()
         }
 
         binding.currentTrackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
