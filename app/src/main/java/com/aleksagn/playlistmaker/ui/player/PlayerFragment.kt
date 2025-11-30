@@ -15,6 +15,7 @@ import com.aleksagn.playlistmaker.databinding.FragmentPlayerBinding
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.presentation.player.PlayerViewModel
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
@@ -105,8 +106,10 @@ class PlayerFragment : Fragment() {
             .load(track.getCoverArtwork())
             .placeholder(R.drawable.ic_track_placeholder)
             .fitCenter()
-            .centerCrop()
-            .transform(RoundedCorners(dpToPx(8f, requireContext())))
+            .transform(
+                CenterCrop(),
+                RoundedCorners(dpToPx(8f, requireContext()))
+            )
             .into(binding.cover)
     }
 
@@ -115,7 +118,7 @@ class PlayerFragment : Fragment() {
         viewModel.onPause()
     }
 
-    fun dpToPx(dp: Float, context: Context): Int {
+    private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,

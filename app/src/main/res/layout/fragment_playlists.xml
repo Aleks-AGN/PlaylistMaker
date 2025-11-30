@@ -8,20 +8,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?attr/colorSecondaryVariant"
+    android:paddingStart="@dimen/medium_padding_1"
+    android:paddingEnd="@dimen/medium_padding_1"
     android:paddingBottom="@dimen/big_padding_1">
+
+    <Button
+        android:id="@+id/btn_new_playlist"
+        android:text="@string/btn_new_playlist"
+        android:layout_gravity="center|top"
+        style="@style/NewPlaylistButton" />
 
     <LinearLayout
         android:id="@+id/placeholder_nothing_found"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_marginTop="@dimen/media_margin_1"
         android:gravity="center">
-
-        <Button
-            android:id="@+id/btn_new_playlist"
-            android:text="@string/btn_new_playlist"
-            android:layout_marginBottom="@dimen/media_margin_1"
-            style="@style/NewPlaylistButton" />
 
         <ImageView style="@style/EmptySearchIcon" />
 
@@ -29,5 +32,13 @@
             android:text="@string/empty_playlists"
             style="@style/SearchText" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlists_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/medium_margin"
+    />
+
 
 </LinearLayout>
