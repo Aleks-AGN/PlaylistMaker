@@ -14,6 +14,7 @@
 
     <Button
         android:id="@+id/btn_new_playlist"
+        android:layout_marginTop="@dimen/big_margin_1"
         android:text="@string/btn_new_playlist"
         android:layout_gravity="center|top"
         style="@style/NewPlaylistButton" />
@@ -39,6 +40,5 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/medium_margin"
     />
-
 
 </LinearLayout>

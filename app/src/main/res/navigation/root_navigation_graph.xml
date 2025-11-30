@@ -57,5 +57,11 @@
         android:id="@+id/playerFragment"
         android:name="com.aleksagn.playlistmaker.ui.player.PlayerFragment"
         android:label="fragment_player"
-        tools:layout="@layout/fragment_player" />
+        tools:layout="@layout/fragment_player">
+
+        <action
+            android:id="@+id/playerFragment_to_playlistCreatorFragment"
+            app:destination="@id/playlistCreatorFragment" />
+    </fragment>
+
 </navigation>
