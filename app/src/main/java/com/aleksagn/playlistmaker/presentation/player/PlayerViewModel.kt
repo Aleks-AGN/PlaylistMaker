@@ -75,7 +75,6 @@ class PlayerViewModel(
     }
 
     fun onFavoriteButtonClicked() {
-
         if (isFavoriteLiveData.value == true) {
             viewModelScope.launch {
                 favoriteTracksInteractor.deleteFavoriteTrackById(track!!.trackId)
@@ -97,6 +96,16 @@ class PlayerViewModel(
                 .collect { playlists ->
                     processResult(playlists)
                 }
+        }
+    }
+
+    fun observeTrackInPlaylist(track: Track, playlist: Playlist): Boolean {
+        return playlistsInteractor.observeTrackInPlaylistById(track.trackId, playlist.playlistId)
+    }
+
+    fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        viewModelScope.launch {
+            playlistsInteractor.insertTrackToPlaylist(track, playlist)
         }
     }
 

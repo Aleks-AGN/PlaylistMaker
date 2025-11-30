@@ -6,7 +6,6 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -19,12 +18,12 @@ import com.aleksagn.playlistmaker.domain.models.Playlist
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.presentation.library.PlaylistsState
 import com.aleksagn.playlistmaker.presentation.player.PlayerViewModel
-import com.aleksagn.playlistmaker.ui.library.PlaylistsAdapter
 import com.aleksagn.playlistmaker.util.debounce
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -42,6 +41,7 @@ class PlayerFragment : Fragment() {
     }
 
     private lateinit var onPlaylistClickDebounce: (Playlist) -> Unit
+    private lateinit var track: Track
 
     private val viewModel: PlayerViewModel by viewModel()
     private val gson: Gson by inject()
@@ -64,7 +64,7 @@ class PlayerFragment : Fragment() {
 
         val jsonTrack = requireArguments().getString(ARGS_TRACK_ID).toString()
 
-        val track = gson.fromJson(jsonTrack, Track::class.java)
+        track = gson.fromJson(jsonTrack, Track::class.java)
 
         viewModel.preparePlayer(track)
 
@@ -157,8 +157,17 @@ class PlayerFragment : Fragment() {
         binding.playlistsList.layoutManager = LinearLayoutManager(requireContext())
 
         onPlaylistClickDebounce = debounce<Playlist>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope,false) { playlist ->
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            addTrackToPlaylist(playlist)
+            val isTrackInPlaylist = viewModel.observeTrackInPlaylist(track, playlist)
+
+            binding.playlistsList.let {
+                if (isTrackInPlaylist) {
+                    Snackbar.make(it,"Трек уже добавлен в плейлист ${playlist.playlistTitle}", Snackbar.LENGTH_LONG).show()
+                } else {
+                    viewModel.addTrackToPlaylist(track, playlist)
+                    Snackbar.make(it,"Добавлено в плейлист ${playlist.playlistTitle}", Snackbar.LENGTH_LONG).show()
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+            }
         }
     }
 
@@ -171,10 +180,6 @@ class PlayerFragment : Fragment() {
 //        super.onResume()
 //        viewModel.getPlaylists()
 //    }
-
-    private fun addTrackToPlaylist (playlist: Playlist) {
-        Toast.makeText(requireContext(), "Проверка: Добавление трека", Toast.LENGTH_LONG).show()
-    }
 
     fun showContent(playlists: List<Playlist>) {
         binding.playlistsList.isVisible = true

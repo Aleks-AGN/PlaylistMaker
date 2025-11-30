@@ -9,5 +9,5 @@ interface PlaylistsInteractor {
     suspend fun insertTrackToPlaylist(track: Track, playlist: Playlist)
     fun getPlaylists(): Flow<List<Playlist>>
     fun getTracksInPlaylist(playlist: Playlist): Flow<List<Track>>
-    fun observeTrackInPlaylistById(trackId: Int, playlistId: Int): Flow<Boolean>
+    fun observeTrackInPlaylistById(trackId: Int, playlistId: Int): Boolean
 }

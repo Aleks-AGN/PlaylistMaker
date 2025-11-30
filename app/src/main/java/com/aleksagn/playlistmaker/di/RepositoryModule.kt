@@ -2,6 +2,7 @@ package com.aleksagn.playlistmaker.di
 
 import com.aleksagn.playlistmaker.data.converters.PlaylistDbConverter
 import com.aleksagn.playlistmaker.data.converters.TrackDbConvertеr
+import com.aleksagn.playlistmaker.data.converters.TrackInListDbConvertеr
 import com.aleksagn.playlistmaker.data.impl.ExternalNavigatorImpl
 import com.aleksagn.playlistmaker.data.impl.FavoriteTracksRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.PlayerRepositoryImpl
@@ -31,6 +32,10 @@ val repositoryModule = module {
 
     factory {
         TrackDbConvertеr()
+    }
+
+    factory {
+        TrackInListDbConvertеr()
     }
 
     factory {

@@ -26,7 +26,7 @@ class PlaylistsInteractorImpl(
         return repository.getTracksInPlaylist(playlist)
     }
 
-    override fun observeTrackInPlaylistById(trackId: Int, playlistId: Int): Flow<Boolean> {
+    override fun observeTrackInPlaylistById(trackId: Int, playlistId: Int): Boolean {
         return repository.observeTrackInPlaylistById(trackId, playlistId)
     }
 }
