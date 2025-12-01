@@ -385,38 +385,31 @@
         <item name="android:textSize">@dimen/title_text_size</item>
     </style>
 
-    <style name="PlaylistTitleField" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingVertical">@dimen/medium_padding_3</item>
-        <item name="android:paddingHorizontal">@dimen/medium_padding_2</item>
-        <item name="android:maxLength">80</item>
-        <item name="android:imeOptions">actionDone</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:inputType">text</item>
-        <item name="android:textColor">@color/yp_black</item>
-        <item name="android:textColorHint">@color/yp_black</item>
-        <item name="android:fontFamily">@font/ys_display_regular</item>
-        <item name="android:textFontWeight">400</item>
-        <item name="android:textSize">@dimen/menu_text_size</item>
-        <item name="android:background">@drawable/playlist_creator_text_field_background</item>
+    <style name="ThemeOverlay.AppTheme.TextInputEditText.Outlined" parent="">
+        <item name="colorControlActivated">@color/yp_text_gray</item>
     </style>
 
-    <style name="PlaylistDescriptionField" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+    <style name="AddPlaylistInputEditTextStyle" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingVertical">@dimen/medium_padding_3</item>
-        <item name="android:paddingHorizontal">@dimen/medium_padding_2</item>
-        <item name="android:maxLength">80</item>
-        <item name="android:imeOptions">actionDone</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:inputType">text</item>
-        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:layout_height">54dp</item>
+        <item name="boxCollapsedPaddingTop">0dp</item>
+        <item name="boxStrokeColor">@color/edit_text_selector_light</item>
+        <item name="hintTextColor">@color/yp_black</item>
         <item name="android:textColorHint">@color/yp_black</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusTopStart">8dp</item>
+    </style>
+
+    <style name="EditTextCursorStyle" parent="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">@dimen/menu_text_size</item>
-        <item name="android:background">@drawable/playlist_creator_text_field_background</item>
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <style name="PlaylistDescription" parent="Widget.MaterialComponents.TextView">

@@ -39,11 +39,7 @@ class PlaylistViewHolder(
 
         binding.title.text = model.playlistTitle
 
-        if (model.trackCount > 0) {
-            binding.count.text = model.trackCount.toString() + " " + pluralize(model.trackCount)
-        } else {
-            binding.count.text = ""
-        }
+        binding.count.text = model.trackCount.toString() + " " + pluralize(model.trackCount)
     }
 
     private fun pluralize(count:Int): String {

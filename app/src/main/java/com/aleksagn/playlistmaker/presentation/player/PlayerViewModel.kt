@@ -1,11 +1,9 @@
 package com.aleksagn.playlistmaker.presentation.player
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.domain.api.FavoriteTracksInteractor
 import com.aleksagn.playlistmaker.domain.api.PlayerInteractor
 import com.aleksagn.playlistmaker.domain.api.PlaylistsInteractor
@@ -17,12 +15,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
     private val playlistsInteractor: PlaylistsInteractor,
-    private val context: Context
 ) : ViewModel() {
 
     companion object {
@@ -111,7 +107,7 @@ class PlayerViewModel(
 
     private fun processResult(playlists: List<Playlist>) {
         if (playlists.isEmpty()) {
-            renderState(PlaylistsState.Empty(message = context.getString(R.string.empty_playlists)))
+            renderState(PlaylistsState.Empty)
         } else {
             renderState(PlaylistsState.Content(playlists))
         }

@@ -40,6 +40,11 @@
     <string name="playlist_creator_dialog_finish">Завершить</string>
     <string name="track_сount">Количество треков</string>
     <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="playlist">Плейлист</string>
+    <string name="create">создан</string>
+    <string name="empty_image">Изображение не выбрано</string>
+    <string name="track_already_added">Трек уже добавлен в плейлист</string>
+    <string name="added_to_playlist">Добавлено в плейлист</string>
 
     <string name="one_track">трек</string>
     <string name="few_tracks">трека</string>

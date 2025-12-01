@@ -16,6 +16,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.aleksagn.playlistmaker.R
@@ -55,7 +56,7 @@ class PlaylistCreatorFragment : Fragment() {
                     )
                     .into(binding.playlistCover)
             } else {
-                Toast.makeText(requireContext(), "Изображение не выбрано", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), requireContext().getString(R.string.empty_image), Toast.LENGTH_LONG).show()
             }
         }
 
@@ -91,40 +92,32 @@ class PlaylistCreatorFragment : Fragment() {
         })
 
         binding.playlistTitleField.setText("")
-        titleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun afterTextChanged(s: Editable?) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                playlistTitle = s?.toString() ?: ""
+        binding.playlistTitleField.doOnTextChanged { text, _, _, _ ->
+            playlistTitle = text?.toString()?.trim() ?: ""
                 if (playlistTitle.isNotEmpty()) {
                     binding.btnCreatePlaylist.setEnabled(true)
                 } else {
                     binding.btnCreatePlaylist.setEnabled(false)
                 }
-            }
         }
-        titleTextWatcher?.let { binding.playlistTitleField.addTextChangedListener(it) }
 
         binding.playlistDescriptionField.setText("")
-        descriptionTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun afterTextChanged(s: Editable?) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                playlistDescription = s?.toString() ?: ""
-            }
+        binding.playlistDescriptionField.doOnTextChanged { text, _, _, _ ->
+            playlistDescription = text?.toString() ?: ""
         }
-        descriptionTextWatcher?.let { binding.playlistDescriptionField.addTextChangedListener(it) }
 
         binding.btnCreatePlaylist.setOnClickListener {
             savePlaylist()
-            showSnackBar()
+            val message = requireContext().getString(R.string.playlist) + " " +
+                    playlistTitle + " " + requireContext().getString(R.string.create)
+            Snackbar.make(it, message, Snackbar.LENGTH_LONG).show()
             findNavController().navigateUp()
         }
     }
 
     private fun handleBackPressed() {
-        if (binding.playlistTitleField.text.isNotEmpty() ||
-            binding.playlistDescriptionField.text.isNotEmpty()
+        if (!binding.playlistTitleField.text.isNullOrEmpty() ||
+            !binding.playlistDescriptionField.text.isNullOrEmpty()
             || imageUri != null) {
             confirmDialog()
         } else {
@@ -150,15 +143,6 @@ class PlaylistCreatorFragment : Fragment() {
                 findNavController().navigateUp()
             }
             .show()
-    }
-
-    private fun showSnackBar() {
-        val snackbar = Snackbar.make(binding.root, "Плейлист $playlistTitle создан", Snackbar.LENGTH_LONG)
-        val textView = snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-        val typeface = ResourcesCompat.getFont(requireContext(), R.font.ys_display_regular)
-        textView.setTextSize(14f)
-        textView.setTypeface(typeface)
-        snackbar.show()
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {

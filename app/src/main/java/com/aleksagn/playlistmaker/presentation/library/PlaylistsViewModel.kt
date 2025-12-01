@@ -1,18 +1,15 @@
 package com.aleksagn.playlistmaker.presentation.library
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.domain.api.PlaylistsInteractor
 import com.aleksagn.playlistmaker.domain.models.Playlist
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(
     private val playlistsInteractor: PlaylistsInteractor,
-    private val context: Context
 ) : ViewModel() {
 
     private val stateLiveData = MutableLiveData<PlaylistsState>()
@@ -34,7 +31,7 @@ class PlaylistsViewModel(
 
     private fun processResult(playlists: List<Playlist>) {
         if (playlists.isEmpty()) {
-            renderState(PlaylistsState.Empty(message = context.getString(R.string.empty_playlists)))
+            renderState(PlaylistsState.Empty)
         } else {
             renderState(PlaylistsState.Content(playlists))
         }

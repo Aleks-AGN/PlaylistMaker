@@ -86,7 +86,7 @@ class FavoritesFragment : Fragment() {
         adapter.notifyDataSetChanged()
     }
 
-    fun showEmpty(emptyMessage: String) {
+    fun showEmpty() {
         binding.trackList.isVisible = false
         binding.placeholderNothingFound.isVisible = true
     }
@@ -94,7 +94,7 @@ class FavoritesFragment : Fragment() {
     fun render(state: FavoritesState) {
         when (state) {
             is FavoritesState.Content -> showContent(state.tracks)
-            is FavoritesState.Empty -> showEmpty(state.message)
+            is FavoritesState.Empty -> showEmpty()
         }
     }
 }

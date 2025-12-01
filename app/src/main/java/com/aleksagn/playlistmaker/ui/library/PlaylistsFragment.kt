@@ -60,18 +60,13 @@ class PlaylistsFragment : Fragment() {
         binding.playlistsList.layoutManager = GridLayoutManager(requireContext(), 2)
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        playlistsViewModel.getPlaylists()
-//    }
-
     fun showContent(playlists: List<Playlist>) {
         binding.playlistsList.isVisible = true
         binding.placeholderNothingFound.isVisible = false
         binding.playlistsList.adapter = PlaylistsAdapter(playlists)
     }
 
-    fun showEmpty(emptyMessage: String) {
+    fun showEmpty() {
         binding.playlistsList.isVisible = false
         binding.placeholderNothingFound.isVisible = true
     }
@@ -79,7 +74,7 @@ class PlaylistsFragment : Fragment() {
     fun render(state: PlaylistsState) {
         when (state) {
             is PlaylistsState.Content -> showContent(state.playlists)
-            is PlaylistsState.Empty -> showEmpty(state.message)
+            is PlaylistsState.Empty -> showEmpty()
         }
     }
 }

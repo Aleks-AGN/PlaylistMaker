@@ -1,18 +1,15 @@
 package com.aleksagn.playlistmaker.presentation.library
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.domain.api.FavoriteTracksInteractor
 import com.aleksagn.playlistmaker.domain.models.Track
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
-    private val context: Context
 ) : ViewModel() {
 
     private val stateLiveData = MutableLiveData<FavoritesState>()
@@ -34,7 +31,7 @@ class FavoritesViewModel(
 
     private fun processResult(tracks: List<Track>) {
         if (tracks.isEmpty()) {
-            renderState(FavoritesState.Empty(message = context.getString(R.string.empty_media_library)))
+            renderState(FavoritesState.Empty)
         } else {
             renderState(FavoritesState.Content(tracks))
         }

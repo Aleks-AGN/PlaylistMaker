@@ -135,14 +135,13 @@ class PlayerFragment : Fragment() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.overlay.visibility = View.GONE
-                    }
-                    else -> {
-                        binding.overlay.visibility = View.VISIBLE
+                        binding.overlay.isVisible = false
+                    } else -> {
+                        binding.overlay.isVisible = true
                     }
                 }
             }
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
         })
 
         binding.btnQueue.setOnClickListener {
@@ -161,10 +160,12 @@ class PlayerFragment : Fragment() {
 
             binding.playlistsList.let {
                 if (isTrackInPlaylist) {
-                    Snackbar.make(it,"Трек уже добавлен в плейлист ${playlist.playlistTitle}", Snackbar.LENGTH_LONG).show()
+                    val message = requireContext().getString(R.string.track_already_added) + " " + playlist.playlistTitle
+                    Snackbar.make(it, message, Snackbar.LENGTH_LONG).show()
                 } else {
                     viewModel.addTrackToPlaylist(track, playlist)
-                    Snackbar.make(it,"Добавлено в плейлист ${playlist.playlistTitle}", Snackbar.LENGTH_LONG).show()
+                    val message = requireContext().getString(R.string.added_to_playlist) + " " + playlist.playlistTitle
+                    Snackbar.make(it, message, Snackbar.LENGTH_LONG).show()
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
@@ -176,11 +177,6 @@ class PlayerFragment : Fragment() {
         viewModel.onPause()
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        viewModel.getPlaylists()
-//    }
-
     fun showContent(playlists: List<Playlist>) {
         binding.playlistsList.isVisible = true
         binding.playlistsList.adapter = PlayerPlaylistAdapter(playlists, object :
@@ -191,14 +187,14 @@ class PlayerFragment : Fragment() {
         })
     }
 
-    fun showEmpty(emptyMessage: String) {
+    fun showEmpty() {
         binding.playlistsList.isVisible = false
     }
 
     fun render(state: PlaylistsState) {
         when (state) {
             is PlaylistsState.Content -> showContent(state.playlists)
-            is PlaylistsState.Empty -> showEmpty(state.message)
+            is PlaylistsState.Empty -> showEmpty()
         }
     }
 
