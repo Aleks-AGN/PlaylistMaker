@@ -9,13 +9,21 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.databinding.FragmentPlayerBinding
+import com.aleksagn.playlistmaker.domain.models.Playlist
 import com.aleksagn.playlistmaker.domain.models.Track
+import com.aleksagn.playlistmaker.presentation.library.PlaylistsState
 import com.aleksagn.playlistmaker.presentation.player.PlayerViewModel
+import com.aleksagn.playlistmaker.util.debounce
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -26,10 +34,14 @@ class PlayerFragment : Fragment() {
 
     companion object {
         private const val ARGS_TRACK_ID = "track_id"
+        private const val CLICK_DEBOUNCE_DELAY = 300L
 
         fun createArgs(trackId: String): Bundle =
             bundleOf(ARGS_TRACK_ID to trackId)
     }
+
+    private lateinit var onPlaylistClickDebounce: (Playlist) -> Unit
+    private lateinit var track: Track
 
     private val viewModel: PlayerViewModel by viewModel()
     private val gson: Gson by inject()
@@ -52,7 +64,7 @@ class PlayerFragment : Fragment() {
 
         val jsonTrack = requireArguments().getString(ARGS_TRACK_ID).toString()
 
-        val track = gson.fromJson(jsonTrack, Track::class.java)
+        track = gson.fromJson(jsonTrack, Track::class.java)
 
         viewModel.preparePlayer(track)
 
@@ -69,6 +81,10 @@ class PlayerFragment : Fragment() {
                 binding.btnFavoriteBorder.setImageResource(R.drawable.ic_btn_favorite_border_active)
             else
                 binding.btnFavoriteBorder.setImageResource(R.drawable.ic_btn_favorite_border_inactive)
+        }
+
+        viewModel.observePlaylistState().observe(viewLifecycleOwner) {
+            render(it)
         }
 
         binding.playerToolbar.setNavigationOnClickListener {
@@ -105,9 +121,55 @@ class PlayerFragment : Fragment() {
             .load(track.getCoverArtwork())
             .placeholder(R.drawable.ic_track_placeholder)
             .fitCenter()
-            .centerCrop()
-            .transform(RoundedCorners(dpToPx(8f, requireContext())))
+            .transform(
+                CenterCrop(),
+                RoundedCorners(dpToPx(8f, requireContext()))
+            )
             .into(binding.cover)
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.isVisible = false
+                    } else -> {
+                        binding.overlay.isVisible = true
+                    }
+                }
+            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+        })
+
+        binding.btnQueue.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            viewModel.getPlaylists()
+        }
+
+        binding.btnNewPlaylist.setOnClickListener {
+            findNavController().navigate(R.id.playerFragment_to_playlistCreatorFragment)
+        }
+
+        binding.playlistsList.layoutManager = LinearLayoutManager(requireContext())
+
+        onPlaylistClickDebounce = debounce<Playlist>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope,false) { playlist ->
+            val isTrackInPlaylist = viewModel.observeTrackInPlaylist(track, playlist)
+
+            binding.playlistsList.let {
+                if (isTrackInPlaylist) {
+                    val message = requireContext().getString(R.string.track_already_added) + " " + playlist.playlistTitle
+                    Snackbar.make(it, message, Snackbar.LENGTH_LONG).show()
+                } else {
+                    viewModel.addTrackToPlaylist(track, playlist)
+                    val message = requireContext().getString(R.string.added_to_playlist) + " " + playlist.playlistTitle
+                    Snackbar.make(it, message, Snackbar.LENGTH_LONG).show()
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+            }
+        }
     }
 
     override fun onPause() {
@@ -115,7 +177,28 @@ class PlayerFragment : Fragment() {
         viewModel.onPause()
     }
 
-    fun dpToPx(dp: Float, context: Context): Int {
+    fun showContent(playlists: List<Playlist>) {
+        binding.playlistsList.isVisible = true
+        binding.playlistsList.adapter = PlayerPlaylistAdapter(playlists, object :
+            PlayerPlaylistAdapter.OnPlaylistItemClickListener {
+            override fun onItemClick(position: Int) {
+                onPlaylistClickDebounce(playlists[position])
+            }
+        })
+    }
+
+    fun showEmpty() {
+        binding.playlistsList.isVisible = false
+    }
+
+    fun render(state: PlaylistsState) {
+        when (state) {
+            is PlaylistsState.Content -> showContent(state.playlists)
+            is PlaylistsState.Empty -> showEmpty()
+        }
+    }
+
+    private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,

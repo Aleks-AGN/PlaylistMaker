@@ -1,6 +1,7 @@
 package com.aleksagn.playlistmaker.di
 
 import com.aleksagn.playlistmaker.presentation.library.FavoritesViewModel
+import com.aleksagn.playlistmaker.presentation.library.PlaylistCreatorViewModel
 import com.aleksagn.playlistmaker.presentation.library.PlaylistsViewModel
 import com.aleksagn.playlistmaker.presentation.player.PlayerViewModel
 import com.aleksagn.playlistmaker.presentation.search.SearchViewModel
@@ -12,7 +13,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     viewModel {
-        PlayerViewModel(get(), get())
+        PlayerViewModel(get(), get(), get())
     }
 
     viewModel {
@@ -24,10 +25,14 @@ val viewModelModule = module {
     }
 
     viewModel {
-        FavoritesViewModel(get(), get())
+        FavoritesViewModel(get())
     }
 
     viewModel {
-        PlaylistsViewModel()
+        PlaylistsViewModel(get())
+    }
+
+    viewModel {
+        PlaylistCreatorViewModel(get(), get())
     }
 }

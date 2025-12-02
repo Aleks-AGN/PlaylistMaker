@@ -3,8 +3,8 @@ package com.aleksagn.playlistmaker.data.db.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "favorite_tracks")
-data class TrackEntity(
+@Entity(tableName = "playlists_tracks")
+data class TrackInListEntity(
     @PrimaryKey
     val trackId: Int, // Идентификатор трека (первичный ключ)
     val trackName: String, // Название композиции

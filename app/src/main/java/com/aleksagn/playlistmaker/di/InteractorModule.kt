@@ -2,12 +2,14 @@ package com.aleksagn.playlistmaker.di
 
 import com.aleksagn.playlistmaker.domain.api.FavoriteTracksInteractor
 import com.aleksagn.playlistmaker.domain.api.PlayerInteractor
+import com.aleksagn.playlistmaker.domain.api.PlaylistsInteractor
 import com.aleksagn.playlistmaker.domain.api.SearchHistoryInteractor
 import com.aleksagn.playlistmaker.domain.api.SharingInteractor
 import com.aleksagn.playlistmaker.domain.api.ThemeSettingInteractor
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
 import com.aleksagn.playlistmaker.domain.impl.FavoriteTracksInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.PlayerInteractorImpl
+import com.aleksagn.playlistmaker.domain.impl.PlaylistsInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.SearchHistoryInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.SharingInteractorImpl
 import com.aleksagn.playlistmaker.domain.impl.ThemeSettingInteractorImpl
@@ -26,6 +28,10 @@ val interactorModule = module {
 
     single<FavoriteTracksInteractor> {
         FavoriteTracksInteractorImpl(get())
+    }
+
+    single<PlaylistsInteractor> {
+        PlaylistsInteractorImpl(get())
     }
 
     factory<PlayerInteractor> {
