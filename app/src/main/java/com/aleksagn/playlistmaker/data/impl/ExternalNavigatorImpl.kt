@@ -8,10 +8,10 @@ import com.aleksagn.playlistmaker.domain.models.EmailData
 
 class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
 
-    override fun shareLink(shareAppLink: String) {
+    override fun shareItem(shareItem: String) {
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.type = "text/plain"
-        shareIntent.putExtra(Intent.EXTRA_TEXT, shareAppLink)
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareItem)
         val chooserIntent = Intent.createChooser(shareIntent, null)
         chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(chooserIntent)

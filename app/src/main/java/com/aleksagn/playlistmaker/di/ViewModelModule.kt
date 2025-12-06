@@ -2,6 +2,7 @@ package com.aleksagn.playlistmaker.di
 
 import com.aleksagn.playlistmaker.presentation.library.FavoritesViewModel
 import com.aleksagn.playlistmaker.presentation.library.PlaylistCreatorViewModel
+import com.aleksagn.playlistmaker.presentation.library.PlaylistViewerViewModel
 import com.aleksagn.playlistmaker.presentation.library.PlaylistsViewModel
 import com.aleksagn.playlistmaker.presentation.player.PlayerViewModel
 import com.aleksagn.playlistmaker.presentation.search.SearchViewModel
@@ -33,6 +34,10 @@ val viewModelModule = module {
     }
 
     viewModel {
-        PlaylistCreatorViewModel(get(), get())
+        PlaylistCreatorViewModel(get(), get(), androidContext())
+    }
+
+    viewModel {
+        PlaylistViewerViewModel(get(), get(), androidContext())
     }
 }

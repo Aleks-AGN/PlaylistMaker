@@ -18,6 +18,7 @@ import com.aleksagn.playlistmaker.domain.models.Playlist
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.presentation.library.PlaylistsState
 import com.aleksagn.playlistmaker.presentation.player.PlayerViewModel
+import com.aleksagn.playlistmaker.ui.library.PlaylistCreatorFragment
 import com.aleksagn.playlistmaker.util.debounce
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -150,7 +151,8 @@ class PlayerFragment : Fragment() {
         }
 
         binding.btnNewPlaylist.setOnClickListener {
-            findNavController().navigate(R.id.playerFragment_to_playlistCreatorFragment)
+            findNavController().navigate(R.id.playerFragment_to_playlistCreatorFragment,
+                PlaylistCreatorFragment.createArgs(playlistId = -1))
         }
 
         binding.playlistsList.layoutManager = LinearLayoutManager(requireContext())

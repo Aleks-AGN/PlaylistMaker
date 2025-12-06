@@ -15,9 +15,12 @@ interface TrackInListDao {
     @Delete(entity = TrackInListEntity::class)
     suspend fun deleteTrack(track: TrackInListEntity)
 
+    @Query("DELETE  FROM playlists_tracks WHERE trackId = :trackId ")
+    suspend fun deleteTrackById(trackId: Int)
+
     @Query("SELECT * FROM playlists_tracks WHERE trackId = :trackId ")
     suspend fun getTrackById(trackId: Int): TrackInListEntity?
 
-    @Query("SELECT * FROM playlists_tracks WHERE trackId IN (:trackIds)")
+    @Query("SELECT * FROM playlists_tracks WHERE trackId IN (:trackIds) ORDER BY additionTime DESC")
     suspend fun getTracksByIds(trackIds: List<Int>): List<TrackInListEntity>
 }

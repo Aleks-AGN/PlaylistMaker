@@ -2,6 +2,7 @@
 <resources>
     <dimen name="separator_line_thickness">2dp</dimen>
     <dimen name="small_margin">8dp</dimen>
+    <dimen name="small_margin_2">12dp</dimen>
     <dimen name="medium_margin">16dp</dimen>
     <dimen name="big_margin_1">24dp</dimen>
     <dimen name="big_margin_2">42dp</dimen>
@@ -26,7 +27,9 @@
     <dimen name="upd_btn_text_size">14sp</dimen>
     <dimen name="library_tab_text_size">14sp</dimen>
     <dimen name="menu_text_size">16sp</dimen>
+    <dimen name="playlist_viewer_desc_text_size">18sp</dimen>
     <dimen name="search_text_size">19sp</dimen>
     <dimen name="title_text_size">22sp</dimen>
     <dimen name="btn_text_size">22sp</dimen>
+    <dimen name="playlist_viewer_title_text_size">24sp</dimen>
 </resources>
