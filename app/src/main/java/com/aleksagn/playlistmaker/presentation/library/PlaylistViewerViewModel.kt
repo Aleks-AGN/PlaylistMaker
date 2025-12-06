@@ -100,4 +100,28 @@ class PlaylistViewerViewModel(
     fun deletePlaylist() {
         playlistsInteractor.deletePlaylist(playlistId)
     }
+
+    fun makeSharingPlaylistMessage(): String {
+        when (stateLiveData.value){
+            is PlaylistViewerState.Content -> {
+                val playlist = (stateLiveData.value as PlaylistViewerState.Content).playlist
+                val tracks: List<Track> = (stateLiveData.value as PlaylistViewerState.Content).tracks
+                var message = playlist.playlistTitle + "\n" + playlist.playlistDescription + "\n" +
+                        getTracksAmountString() + "\n"
+                var counter = 1
+                tracks.forEach {
+                    message += "${counter.toString()}. ${it.artistName} - ${it.trackName} (${
+                        DurationToStringConverter(it.trackTimeMillis.toInt())})\n"
+                    counter++
+                }
+                return message
+            } else -> {
+                return ""
+            }
+        }
+    }
+
+    fun sharePlaylist(message: String) {
+        sharingInteractor.sharePlaylist(message)
+    }
 }

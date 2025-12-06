@@ -23,6 +23,7 @@ import com.aleksagn.playlistmaker.ui.player.PlayerFragment
 import com.aleksagn.playlistmaker.util.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -213,7 +214,15 @@ class PlaylistViewerFragment : Fragment() {
     }
 
     private fun sharePlaylist(view: View) {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
+        val message = playlistViewerViewModel.makeSharingPlaylistMessage()
+
+        when {
+            message.isNotEmpty() -> playlistViewerViewModel.sharePlaylist(message)
+            else -> Snackbar.make(view, requireContext().getString(R.string.no_tracks),
+                Snackbar.LENGTH_LONG).show()
+        }
     }
 
     private fun editPlaylist(view: View) {
