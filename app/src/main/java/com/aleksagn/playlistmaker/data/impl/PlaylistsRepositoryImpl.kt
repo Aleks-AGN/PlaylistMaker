@@ -23,6 +23,11 @@ class PlaylistsRepositoryImpl(
         appDatabase.playlistDao().insertPlaylist(playlistDbConverter.map(playlist))
     }
 
+    override suspend fun updatePlaylist(p: Playlist) {
+        val playlistImageUri = p.playlistImageUri?.toString() ?: ""
+        appDatabase.playlistDao().updatePlaylist(p.playlistId, p.playlistTitle, p.playlistDescription, playlistImageUri)
+    }
+
     override suspend fun insertTrackToPlaylist(track: Track, playlistId: Int) {
         val playlistChecked = appDatabase.playlistDao().getPlaylistById(playlistId)
         if (playlistChecked != null) {

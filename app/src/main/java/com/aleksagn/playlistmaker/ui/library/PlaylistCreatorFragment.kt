@@ -9,10 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -28,6 +28,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistCreatorFragment : Fragment() {
 
+    companion object {
+        private const val ARGS_PLAYLIST_ID = "playlist_id"
+
+        fun createArgs(playlistId: Int): Bundle =
+            bundleOf(ARGS_PLAYLIST_ID to playlistId)
+    }
+
     private val playlistCreatorViewModel: PlaylistCreatorViewModel by viewModel()
 
     private var titleTextWatcher: TextWatcher? = null
@@ -36,30 +43,16 @@ class PlaylistCreatorFragment : Fragment() {
     private var _binding: FragmentPlaylistCreatorBinding? = null
     private val binding get() = _binding!!
 
-    private var playlistTitle = ""
-    private var playlistDescription = ""
-    private var imageUri: Uri? = null
-
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            if (uri != null) {
-                imageUri = uri
-                Glide.with(this@PlaylistCreatorFragment)
-                    .load(uri)
-                    .fitCenter()
-                    .transform(
-                        CenterCrop(),
-                        RoundedCorners(dpToPx(8f, requireContext()))
-                    )
-                    .into(binding.playlistCover)
-            } else {
-                Toast.makeText(requireContext(), requireContext().getString(R.string.empty_image), Toast.LENGTH_LONG).show()
-            }
+            setImage(uri)
         }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         _binding = FragmentPlaylistCreatorBinding.inflate(inflater, container, false)
+        val playlistId = requireArguments().getInt(PlaylistCreatorFragment.ARGS_PLAYLIST_ID)
+        playlistCreatorViewModel.setPlaylistData(playlistId)
         return binding.root
     }
 
@@ -74,23 +67,49 @@ class PlaylistCreatorFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
+        if (playlistCreatorViewModel.getEditableStatus()) {
+            binding.playlistCreatorToolbar.setTitle(playlistCreatorViewModel.getFragmentTitle())
+            binding.btnCreatePlaylist.setText(playlistCreatorViewModel.getButtonText())
+
+            val uri = playlistCreatorViewModel.getImageUri()
+            if (uri != null && uri.toString().isNotEmpty()) {
+                setImage(uri)
+            } else {
+                binding.playlistCover.setImageDrawable(requireContext().getDrawable(R.drawable.ic_playlist_creator_placeholder))
+            }
+        }
+
         binding.playlistCover.setOnClickListener {
             pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.playlistCreatorToolbar.setNavigationOnClickListener {
-            handleBackPressed()
+            if (playlistCreatorViewModel.getEditableStatus()) {
+                findNavController().navigateUp()
+            } else {
+                handleBackPressed()
+            }
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                handleBackPressed()
+                if (playlistCreatorViewModel.getEditableStatus()) {
+                    findNavController().navigateUp()
+                } else {
+                    handleBackPressed()
+                }
             }
         })
 
-        binding.playlistTitleField.setText("")
+        binding.playlistTitleField.setText(playlistCreatorViewModel.getPlaylistTitle())
+        if (playlistCreatorViewModel.getPlaylistTitle().isNotEmpty()) {
+            binding.btnCreatePlaylist.setEnabled(true)
+        } else {
+            binding.btnCreatePlaylist.setEnabled(false)
+        }
         binding.playlistTitleField.doOnTextChanged { text, _, _, _ ->
-            playlistTitle = text?.toString()?.trim() ?: ""
+            val playlistTitle = text?.toString()?.trim() ?: ""
+            playlistCreatorViewModel.setPlaylistTitle(playlistTitle)
                 if (playlistTitle.isNotEmpty()) {
                     binding.btnCreatePlaylist.setEnabled(true)
                 } else {
@@ -98,24 +117,38 @@ class PlaylistCreatorFragment : Fragment() {
                 }
         }
 
-        binding.playlistDescriptionField.setText("")
+        binding.playlistDescriptionField.setText(playlistCreatorViewModel.getPlaylistDescription())
         binding.playlistDescriptionField.doOnTextChanged { text, _, _, _ ->
-            playlistDescription = text?.toString() ?: ""
+            val playlistDescription = text?.toString() ?: ""
+            playlistCreatorViewModel.setPlaylistDescription(playlistDescription)
         }
 
         binding.btnCreatePlaylist.setOnClickListener {
-            savePlaylist()
-            val message = requireContext().getString(R.string.playlist) + " " +
-                    playlistTitle + " " + requireContext().getString(R.string.create)
-            Snackbar.make(it, message, Snackbar.LENGTH_LONG).show()
-            findNavController().navigateUp()
+            if (playlistCreatorViewModel.getPlaylistTitle().isNotEmpty()) {
+                savePlaylist()
+                val message = playlistCreatorViewModel.getConfirmPlaylistProcessMessage()
+                Snackbar.make(it, message, Snackbar.LENGTH_LONG).show()
+                findNavController().navigateUp()
+            }
+        }
+    }
+
+    private fun setImage(uri: Uri?) {
+        if (uri != null) {
+            playlistCreatorViewModel.setImageUri(uri)
+            Glide.with(this@PlaylistCreatorFragment)
+                .load(uri)
+                .fitCenter()
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(dpToPx(8f, requireContext()))
+                )
+                .into(binding.playlistCover)
         }
     }
 
     private fun handleBackPressed() {
-        if (!binding.playlistTitleField.text.isNullOrEmpty() ||
-            !binding.playlistDescriptionField.text.isNullOrEmpty()
-            || imageUri != null) {
+        if (playlistCreatorViewModel.isPlaylistHasData()) {
             confirmDialog()
         } else {
             findNavController().navigateUp()
@@ -123,11 +156,7 @@ class PlaylistCreatorFragment : Fragment() {
     }
 
     private fun savePlaylist() {
-        playlistCreatorViewModel.savePlaylist(playlistTitle, playlistDescription, imageUri)
-
-        if (imageUri != null){
-            playlistCreatorViewModel.saveImage(imageUri!!, playlistTitle)
-        }
+        playlistCreatorViewModel.savePlaylist()
     }
 
     private fun confirmDialog() {

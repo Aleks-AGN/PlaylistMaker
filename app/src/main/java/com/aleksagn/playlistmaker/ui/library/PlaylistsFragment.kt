@@ -57,7 +57,8 @@ class PlaylistsFragment : Fragment() {
         binding.btnNewPlaylist.setOnClickListener {
             requireParentFragment()
                 .findNavController()
-                .navigate(R.id.action_libraryFragment_to_playlistCreatorFragment)
+                .navigate(R.id.action_libraryFragment_to_playlistCreatorFragment,
+                PlaylistCreatorFragment.createArgs(playlistId = -1))
         }
 
         binding.playlistsList.layoutManager = GridLayoutManager(requireContext(), 2)

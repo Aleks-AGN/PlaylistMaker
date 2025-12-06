@@ -42,6 +42,7 @@
     <string name="add_to_playlist">Добавить в плейлист</string>
     <string name="playlist">Плейлист</string>
     <string name="create">создан</string>
+    <string name="update">обновлен</string>
     <string name="empty_image">Изображение не выбрано</string>
     <string name="track_already_added">Трек уже добавлен в плейлист</string>
     <string name="added_to_playlist">Добавлено в плейлист</string>
@@ -61,5 +62,7 @@
     <string name="delete_playlist_dialog_message">Хотите удалить плейлист?</string>
     <string name="no_tracks">В этом плейлисте нет списка треков, которым можно поделиться</string>
     <string name="no_tracks_in_playlist">В этом плейлисте нет треков</string>
+    <string name="edit">Редактировать</string>
+    <string name="save_playlist">Сохранить</string>
 
 </resources>

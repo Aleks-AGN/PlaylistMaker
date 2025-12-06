@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsRepository {
     suspend fun insertPlaylist(playlist: Playlist)
+    suspend fun updatePlaylist(playlist: Playlist)
     suspend fun insertTrackToPlaylist(track: Track, playlistId: Int)
     fun deleteTrackFromPlaylist(trackId: Int, playlistId: Int)
     fun deletePlaylist(playlistId: Int)

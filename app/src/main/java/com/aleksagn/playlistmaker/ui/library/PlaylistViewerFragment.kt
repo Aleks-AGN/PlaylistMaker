@@ -42,7 +42,7 @@ class PlaylistViewerFragment : Fragment() {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private val playlistViewerViewModel: PlaylistViewerViewModel by viewModel()
-    private  var playlistId: Int = 0
+    private var playlistId: Int = 0
 
     private var _binding: FragmentPlaylistViewerBinding? = null
     private val binding get() = _binding!!
@@ -226,6 +226,8 @@ class PlaylistViewerFragment : Fragment() {
     }
 
     private fun editPlaylist(view: View) {
-
+        findNavController().navigate(
+            R.id.action_playlistViewerFragment_to_playlistCreatorFragment,
+            PlaylistCreatorFragment.createArgs(playlistId = playlistId))
     }
 }

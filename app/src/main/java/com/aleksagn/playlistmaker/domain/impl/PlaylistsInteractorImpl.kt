@@ -14,6 +14,10 @@ class PlaylistsInteractorImpl(
         repository.insertPlaylist(playlist)
     }
 
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        repository.updatePlaylist(playlist)
+    }
+
     override suspend fun insertTrackToPlaylist(track: Track, playlistId: Int) {
         repository.insertTrackToPlaylist(track, playlistId)
     }
