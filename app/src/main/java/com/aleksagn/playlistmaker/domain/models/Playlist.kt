@@ -9,4 +9,13 @@ data class Playlist(
     var playlistImageUri: Uri? = null, // Путь к файлу изображения для обложки
     var trackList: String = "", // Список идентификаторов треков, которые будут добавляться в этот плейлист
     var trackCount: Int = 0 // Количество треков, добавленных в плейлист
-)
+) {
+    constructor(): this(
+        playlistId = 0,
+        playlistTitle = "",
+        playlistDescription = "",
+        playlistImageUri = null,
+        trackList = "",
+        trackCount = 0
+    )
+}

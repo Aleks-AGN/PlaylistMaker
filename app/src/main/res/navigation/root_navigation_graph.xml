@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_libraryFragment_to_playlistCreatorFragment"
             app:destination="@id/playlistCreatorFragment" />
+        <action
+            android:id="@+id/action_libraryFragment_to_playlistViewerFragment"
+            app:destination="@id/playlistViewerFragment" />
     </fragment>
 
     <fragment
@@ -41,10 +44,27 @@
         tools:layout="@layout/fragment_playlist_creator" >
 
         <action
-            android:id="@+id/playlistCreatorFragment_to_libraryFragment"
+            android:id="@+id/action_playlistCreatorFragment_to_libraryFragment"
             app:destination="@id/libraryFragment"
             app:popUpTo="@id/libraryFragment"
             app:popUpToInclusive="false"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/playlistViewerFragment"
+        android:name="com.aleksagn.playlistmaker.ui.library.PlaylistViewerFragment"
+        android:label="fragment_playlist_viewer"
+        tools:layout="@layout/fragment_playlist_viewer" >
+
+        <action
+            android:id="@+id/action_playlistViewerFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_playlistViewerFragment_to_playlistCreatorFragment"
+            app:destination="@id/playlistCreatorFragment" />
+        <action
+            android:id="@+id/action_playlistViewerFragment_to_libraryFragment"
+            app:destination="@id/libraryFragment"/>
     </fragment>
 
     <fragment

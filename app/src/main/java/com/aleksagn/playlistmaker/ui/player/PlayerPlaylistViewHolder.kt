@@ -39,15 +39,7 @@ class PlayerPlaylistViewHolder(
 
         binding.title.text = model.playlistTitle
 
-        binding.count.text = model.trackCount.toString() + " " + pluralize(model.trackCount)
-    }
-
-    private fun pluralize(count:Int): String {
-        return when (count) {
-            1 -> context.resources.getString(R.string.one_track)
-            in 2..4 -> context.resources.getString(R.string.few_tracks)
-            else -> context.resources.getString(R.string.many_tracks)
-        }
+        binding.count.text = model.trackCount.toString() + " " + context.resources.getQuantityString(R.plurals.plural_tracks, model.trackCount)
     }
 
     fun dpToPx(dp: Float, context: Context): Int {

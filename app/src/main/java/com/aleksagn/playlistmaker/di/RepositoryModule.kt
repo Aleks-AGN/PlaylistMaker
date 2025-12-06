@@ -5,6 +5,7 @@ import com.aleksagn.playlistmaker.data.converters.TrackDbConvertеr
 import com.aleksagn.playlistmaker.data.converters.TrackInListDbConvertеr
 import com.aleksagn.playlistmaker.data.impl.ExternalNavigatorImpl
 import com.aleksagn.playlistmaker.data.impl.FavoriteTracksRepositoryImpl
+import com.aleksagn.playlistmaker.data.impl.FileStorageRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.PlayerRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.PlaylistsRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.SearchHistoryRepositoryImpl
@@ -12,6 +13,7 @@ import com.aleksagn.playlistmaker.data.impl.ThemeSettingRepositoryImpl
 import com.aleksagn.playlistmaker.data.impl.TracksRepositoryImpl
 import com.aleksagn.playlistmaker.domain.api.ExternalNavigator
 import com.aleksagn.playlistmaker.domain.api.FavoriteTracksRepository
+import com.aleksagn.playlistmaker.domain.api.FileStorageRepository
 import com.aleksagn.playlistmaker.domain.api.PlayerRepository
 import com.aleksagn.playlistmaker.domain.api.PlaylistsRepository
 import com.aleksagn.playlistmaker.domain.api.SearchHistoryRepository
@@ -60,5 +62,9 @@ val repositoryModule = module {
 
     single<ExternalNavigator> {
         ExternalNavigatorImpl(androidContext())
+    }
+
+    factory<FileStorageRepository> {
+        FileStorageRepositoryImpl(androidContext())
     }
 }

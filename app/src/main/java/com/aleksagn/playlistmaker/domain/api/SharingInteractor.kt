@@ -4,6 +4,7 @@ import com.aleksagn.playlistmaker.domain.models.EmailData
 
 interface SharingInteractor {
     fun shareApp(shareAppLink: String)
+    fun sharePlaylist(playlist: String)
     fun openSupport(supportEmailData: EmailData)
     fun openTerms(termsLink: String)
 }

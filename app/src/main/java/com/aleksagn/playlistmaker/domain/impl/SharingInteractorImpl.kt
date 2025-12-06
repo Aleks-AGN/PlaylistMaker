@@ -9,7 +9,11 @@ class SharingInteractorImpl(
 ) : SharingInteractor {
 
     override fun shareApp(shareAppLink: String) {
-        externalNavigator.shareLink(shareAppLink)
+        externalNavigator.shareItem(shareAppLink)
+    }
+
+    override fun sharePlaylist(playlist: String) {
+        externalNavigator.shareItem(playlist)
     }
 
     override fun openSupport(supportEmailData: EmailData) {
