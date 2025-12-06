@@ -394,7 +394,7 @@
         <item name="android:layout_height">54dp</item>
         <item name="boxCollapsedPaddingTop">0dp</item>
         <item name="boxStrokeColor">@color/edit_text_selector_dark</item>
-        <item name="hintTextColor">@color/yp_white</item>
+        <item name="hintTextColor">@color/edit_text_selector_dark</item>
         <item name="android:textColorHint">@color/yp_white</item>
         <item name="boxCornerRadiusBottomEnd">8dp</item>
         <item name="boxCornerRadiusBottomStart">8dp</item>

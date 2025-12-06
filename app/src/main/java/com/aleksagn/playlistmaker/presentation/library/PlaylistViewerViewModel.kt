@@ -110,8 +110,7 @@ class PlaylistViewerViewModel(
                         getTracksAmountString() + "\n"
                 var counter = 1
                 tracks.forEach {
-                    message += "${counter.toString()}. ${it.artistName} - ${it.trackName} (${
-                        DurationToStringConverter(it.trackTimeMillis.toInt())})\n"
+                    message += "${counter.toString()}. ${it.artistName} - ${it.trackName} (${it.getFormatTime()})\n"
                     counter++
                 }
                 return message
