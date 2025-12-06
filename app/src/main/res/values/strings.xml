@@ -45,9 +45,21 @@
     <string name="empty_image">Изображение не выбрано</string>
     <string name="track_already_added">Трек уже добавлен в плейлист</string>
     <string name="added_to_playlist">Добавлено в плейлист</string>
-
     <string name="one_track">трек</string>
     <string name="few_tracks">трека</string>
     <string name="many_tracks">треков</string>
+    <string name="one_minute">минута</string>
+    <string name="few_minutes">минуты</string>
+    <string name="many_minutes">минут</string>
+    <string name="share">Поделиться</string>
+    <string name="edit_information">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="delete_track_dialog_message">Хотите удалить трек?</string>
+    <string name="no">НЕТ</string>
+    <string name="yes">ДА</string>
+    <string name="delete_playlist_dialog_title">Удалить плейлист</string>
+    <string name="delete_playlist_dialog_message">Хотите удалить плейлист?</string>
+    <string name="no_tracks">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="no_tracks_in_playlist">В этом плейлисте нет треков</string>
 
 </resources>

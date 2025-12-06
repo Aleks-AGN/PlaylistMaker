@@ -101,7 +101,7 @@ class PlayerViewModel(
 
     fun addTrackToPlaylist(track: Track, playlist: Playlist) {
         viewModelScope.launch {
-            playlistsInteractor.insertTrackToPlaylist(track, playlist)
+            playlistsInteractor.insertTrackToPlaylist(track, playlist.playlistId)
         }
     }
 
