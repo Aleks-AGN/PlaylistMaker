@@ -17,6 +17,7 @@ import com.aleksagn.playlistmaker.databinding.FragmentPlayerBinding
 import com.aleksagn.playlistmaker.domain.models.Playlist
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.presentation.library.PlaylistsState
+import com.aleksagn.playlistmaker.presentation.player.PlayerState
 import com.aleksagn.playlistmaker.presentation.player.PlayerViewModel
 import com.aleksagn.playlistmaker.ui.library.PlaylistCreatorFragment
 import com.aleksagn.playlistmaker.util.debounce
@@ -71,10 +72,8 @@ class PlayerFragment : Fragment() {
 
         viewModel.observePlayerState().observe(viewLifecycleOwner) {
             binding.btnPlay.isEnabled = it.isPlayButtonEnabled
-            binding.btnPlay.isVisible = it.isPlayButtonVisible
-            binding.btnPause.isVisible = !it.isPlayButtonVisible
+            binding.btnPlay.isPlaying = it is PlayerState.Playing
             binding.currentTrackTime.text = it.progress
-
         }
 
         viewModel.observeIsFavorite.observe(viewLifecycleOwner) { isFavorite ->
@@ -94,10 +93,6 @@ class PlayerFragment : Fragment() {
 
         binding.btnPlay.setOnClickListener {
             viewModel.onPlayButtonClicked()
-        }
-
-        binding.btnPause.setOnClickListener {
-            viewModel.onPauseButtonClicked()
         }
 
         binding.btnFavoriteBorder.setOnClickListener {

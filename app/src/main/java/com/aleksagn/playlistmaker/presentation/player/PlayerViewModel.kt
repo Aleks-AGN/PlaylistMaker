@@ -57,12 +57,6 @@ class PlayerViewModel(
             is PlayerState.Prepared, is PlayerState.Paused -> {
                 startPlayer()
             }
-            else -> { }
-        }
-    }
-
-    fun onPauseButtonClicked() {
-        when(playerStateLiveData.value) {
             is PlayerState.Playing -> {
                 pausePlayer()
             }
