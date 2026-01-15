@@ -71,27 +71,21 @@
             app:layout_constraintBottom_toTopOf="@id/btn_queue"
             app:layout_constraintTop_toBottomOf="@+id/track_name" />
 
-        <ImageButton
+        <com.aleksagn.playlistmaker.ui.player.PlaybackButtonView
             android:id="@+id/btn_play"
-            style="@style/PlayButton"
-            android:background="?attr/colorSecondaryVariant"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center|end"
             android:layout_marginTop="28dp"
+            android:focusable="true"
+            android:clickable="true"
+            android:enabled="false"
             app:layout_constraintEnd_toStartOf="@id/right_border"
             app:layout_constraintStart_toEndOf="@id/left_border"
             app:layout_constraintBottom_toTopOf="@id/current_track_time"
             app:layout_constraintTop_toBottomOf="@+id/artist_name"
-            android:enabled="false" />
-
-        <ImageButton
-            android:id="@+id/btn_pause"
-            style="@style/PauseButton"
-            android:background="?attr/colorSecondaryVariant"
-            android:layout_marginTop="28dp"
-            app:layout_constraintEnd_toStartOf="@id/right_border"
-            app:layout_constraintStart_toEndOf="@id/left_border"
-            app:layout_constraintBottom_toTopOf="@id/current_track_time"
-            app:layout_constraintTop_toBottomOf="@+id/artist_name"
-            android:visibility="gone" />
+            app:playIcon="@drawable/ic_btn_play"
+            app:pauseIcon="@drawable/ic_btn_pause" />
 
         <ImageButton
             android:id="@+id/btn_queue"
