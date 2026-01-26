@@ -1,11 +1,13 @@
 package com.aleksagn.playlistmaker.ui.player
 
 import android.content.Context
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,6 +22,7 @@ import com.aleksagn.playlistmaker.presentation.library.PlaylistsState
 import com.aleksagn.playlistmaker.presentation.player.PlayerState
 import com.aleksagn.playlistmaker.presentation.player.PlayerViewModel
 import com.aleksagn.playlistmaker.ui.library.PlaylistCreatorFragment
+import com.aleksagn.playlistmaker.util.ConnectivityBroadcastReceiver
 import com.aleksagn.playlistmaker.util.debounce
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -47,6 +50,8 @@ class PlayerFragment : Fragment() {
 
     private val viewModel: PlayerViewModel by viewModel()
     private val gson: Gson by inject()
+
+    private val connectivityBroadcastReceiver = ConnectivityBroadcastReceiver()
 
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
@@ -169,9 +174,21 @@ class PlayerFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        ContextCompat.registerReceiver(
+            requireContext(),
+            connectivityBroadcastReceiver,
+            IntentFilter(ConnectivityBroadcastReceiver.ACTION),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
+        requireContext().unregisterReceiver(connectivityBroadcastReceiver)
     }
 
     fun showContent(playlists: List<Playlist>) {

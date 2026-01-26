@@ -1,6 +1,7 @@
 package com.aleksagn.playlistmaker.ui.search
 
 import android.content.Context
+import android.content.IntentFilter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +22,7 @@ import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.ui.player.PlayerFragment
 import com.aleksagn.playlistmaker.presentation.search.SearchState
 import com.aleksagn.playlistmaker.presentation.search.SearchViewModel
+import com.aleksagn.playlistmaker.util.ConnectivityBroadcastReceiver
 import com.aleksagn.playlistmaker.util.debounce
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
@@ -39,6 +42,8 @@ class SearchFragment : Fragment() {
 
     private val adapter = TrackAdapter()
     private val historyAdapter = TrackAdapter()
+
+    private val connectivityBroadcastReceiver = ConnectivityBroadcastReceiver()
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -137,6 +142,22 @@ class SearchFragment : Fragment() {
         super.onDestroyView()
         textWatcher?.let { binding.searchField.removeTextChangedListener(it) }
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        ContextCompat.registerReceiver(
+            requireContext(),
+            connectivityBroadcastReceiver,
+            IntentFilter(ConnectivityBroadcastReceiver.ACTION),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireContext().unregisterReceiver(connectivityBroadcastReceiver)
     }
 
     fun showHistory() {
