@@ -52,9 +52,9 @@ val repositoryModule = module {
         PlaylistsRepositoryImpl(get(), get(), get())
     }
 
-    factory<PlayerRepository> {
-        PlayerRepositoryImpl(get())
-    }
+//    factory<PlayerRepository> {
+//        PlayerRepositoryImpl(get())
+//    }
 
     single<ThemeSettingRepository> {
         ThemeSettingRepositoryImpl(get())

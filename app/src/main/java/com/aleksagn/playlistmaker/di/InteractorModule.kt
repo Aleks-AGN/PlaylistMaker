@@ -34,9 +34,9 @@ val interactorModule = module {
         PlaylistsInteractorImpl(get())
     }
 
-    factory<PlayerInteractor> {
-        PlayerInteractorImpl(get())
-    }
+//    factory<PlayerInteractor> {
+//        PlayerInteractorImpl(get())
+//    }
 
     single<ThemeSettingInteractor> {
         ThemeSettingInteractorImpl(get())

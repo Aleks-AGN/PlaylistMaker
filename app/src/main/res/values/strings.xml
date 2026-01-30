@@ -65,5 +65,6 @@
     <string name="no_tracks_in_playlist">В этом плейлисте нет треков</string>
     <string name="edit">Редактировать</string>
     <string name="save_playlist">Сохранить</string>
+    <string name="permission_message">Приложению необходимо дополнительное разрешение для показа уведомлений</string>
 
 </resources>
