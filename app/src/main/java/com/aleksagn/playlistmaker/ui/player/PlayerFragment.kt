@@ -57,14 +57,17 @@ class PlayerFragment : Fragment() {
     private val gson: Gson by inject()
 
     private val connectivityBroadcastReceiver = ConnectivityBroadcastReceiver()
+    private var isServiceConnected: Boolean = false
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as AudioPlayerService.AudioPlayerServiceBinder
+            isServiceConnected = true
             viewModel.setAudioPlayerControl(binder.getService())
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+            isServiceConnected = false
             viewModel.removeAudioPlayerControl()
         }
     }
@@ -193,9 +196,18 @@ class PlayerFragment : Fragment() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        if (isServiceConnected) {
+            viewModel.showNotification()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        viewModel.hideNotification()
+        if (isServiceConnected) {
+            viewModel.hideNotification()
+        }
         ContextCompat.registerReceiver(
             requireContext(),
             connectivityBroadcastReceiver,

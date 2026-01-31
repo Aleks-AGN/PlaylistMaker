@@ -62,6 +62,7 @@ class AudioPlayerService : Service(), AudioPlayerControl {
     override fun onCreate() {
         super.onCreate()
         mediaPlayer = MediaPlayer()
+        createNotificationChannel()
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -70,8 +71,6 @@ class AudioPlayerService : Service(), AudioPlayerControl {
         trackName = intent?.getStringExtra("track_name") ?: ""
 
         initMediaPlayer()
-
-        createNotificationChannel()
 
         return binder
     }
@@ -143,13 +142,11 @@ class AudioPlayerService : Service(), AudioPlayerControl {
 
     private fun createServiceNotification(): Notification {
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("Playlist Maker")
+            .setContentTitle(getString(R.string.app_name))
             .setContentText("$artistName - $trackName")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
             .build()
     }
 
@@ -166,8 +163,8 @@ class AudioPlayerService : Service(), AudioPlayerControl {
     }
 
     override fun hideNotification() {
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(SERVICE_NOTIFICATION_ID)
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     inner class AudioPlayerServiceBinder : Binder() {
