@@ -12,6 +12,7 @@
     <string name="country">Страна</string>
     <string name="empty_search">Ничего не нашлось</string>
     <string name="net_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="net_connection_error">Отсутствует подключение к интернету</string>
     <string name="update_search">Обновить</string>
     <string name="search_history">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
@@ -64,5 +65,6 @@
     <string name="no_tracks_in_playlist">В этом плейлисте нет треков</string>
     <string name="edit">Редактировать</string>
     <string name="save_playlist">Сохранить</string>
+    <string name="permission_message">Приложению необходимо дополнительное разрешение для показа уведомлений</string>
 
 </resources>

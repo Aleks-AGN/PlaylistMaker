@@ -38,9 +38,9 @@ val dataModule = module {
         Gson()
     }
 
-    single {
-        MediaPlayer()
-    }
+//    single {
+//        MediaPlayer()
+//    }
 
     single<NetworkClient> {
         RetrofitNetworkClient(get(), androidContext())

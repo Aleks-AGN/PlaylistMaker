@@ -5,27 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aleksagn.playlistmaker.domain.api.FavoriteTracksInteractor
-import com.aleksagn.playlistmaker.domain.api.PlayerInteractor
 import com.aleksagn.playlistmaker.domain.api.PlaylistsInteractor
 import com.aleksagn.playlistmaker.domain.models.Playlist
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.presentation.library.PlaylistsState
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import com.aleksagn.playlistmaker.services.AudioPlayerControl
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor,
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
     private val playlistsInteractor: PlaylistsInteractor,
 ) : ViewModel() {
 
-    companion object {
-        private const val DELAY = 300L
-    }
-
-    private var timerJob: Job? = null
     private var track: Track? = null
 
     private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
@@ -37,30 +28,45 @@ class PlayerViewModel(
     private val playlistStateLiveData = MutableLiveData<PlaylistsState>()
     fun observePlaylistState(): LiveData<PlaylistsState> = playlistStateLiveData
 
+    private var audioPlayerControl: AudioPlayerControl? = null
+
+    fun setAudioPlayerControl(audioPlayerControl: AudioPlayerControl) {
+        this.audioPlayerControl = audioPlayerControl
+
+        viewModelScope.launch {
+            audioPlayerControl.getCurrentPlayerState().collect {
+                playerStateLiveData.postValue(it)
+            }
+        }
+    }
+
+    fun removeAudioPlayerControl() {
+        audioPlayerControl = null
+    }
+
+    fun showNotification() {
+        if (playerStateLiveData.value is PlayerState.Playing) {
+            audioPlayerControl?.showNotification()
+        }
+    }
+
+    fun hideNotification() {
+        if (playerStateLiveData.value is PlayerState.Playing) {
+            audioPlayerControl?.hideNotification()
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
-        releasePlayer()
-    }
-
-    private fun releasePlayer() {
-        stopTimer()
-        playerInteractor.releasePlayer()
-        playerStateLiveData.value = PlayerState.Default()
-    }
-
-    fun onPause() {
-        pausePlayer()
+        hideNotification()
+        audioPlayerControl = null
     }
 
     fun onPlayButtonClicked() {
-        when(playerStateLiveData.value) {
-            is PlayerState.Prepared, is PlayerState.Paused -> {
-                startPlayer()
-            }
-            is PlayerState.Playing -> {
-                pausePlayer()
-            }
-            else -> { }
+        if (playerStateLiveData.value is PlayerState.Playing) {
+            audioPlayerControl?.pausePlayer()
+        } else {
+            audioPlayerControl?.startPlayer()
         }
     }
 
@@ -120,43 +126,5 @@ class PlayerViewModel(
                 track!!.isFavorite = it
             }
         }
-
-        val onPrepare = {
-            playerStateLiveData.postValue(PlayerState.Prepared())
-        }
-
-        val onComplete = {
-            stopTimer()
-            playerStateLiveData.postValue(PlayerState.Prepared())
-        }
-
-        playerInteractor.preparePlayer(currentTrack.previewUrl, onPrepare, onComplete)
-    }
-
-    private fun startPlayer() {
-        playerInteractor.startPlayer()
-        playerStateLiveData.postValue(PlayerState.Playing(playerInteractor.getCurrentPlayTime()))
-        startTimer()
-    }
-
-    private fun pausePlayer() {
-        playerStateLiveData.postValue(PlayerState.Paused(playerInteractor.getCurrentPlayTime()))
-        playerInteractor.pausePlayer()
-        stopTimer()
-    }
-
-    private fun startTimer() {
-        stopTimer()
-        timerJob = viewModelScope.launch {
-            while (isActive && playerInteractor.isPlaying()) {
-                playerStateLiveData.postValue(PlayerState.Playing(playerInteractor.getCurrentPlayTime()))
-                delay(DELAY)
-            }
-        }
-    }
-
-    private fun stopTimer() {
-        timerJob?.cancel()
-        timerJob = null
     }
 }

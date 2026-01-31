@@ -1,11 +1,17 @@
 package com.aleksagn.playlistmaker.ui.player
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -19,7 +25,9 @@ import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.presentation.library.PlaylistsState
 import com.aleksagn.playlistmaker.presentation.player.PlayerState
 import com.aleksagn.playlistmaker.presentation.player.PlayerViewModel
+import com.aleksagn.playlistmaker.services.AudioPlayerService
 import com.aleksagn.playlistmaker.ui.library.PlaylistCreatorFragment
+import com.aleksagn.playlistmaker.util.ConnectivityBroadcastReceiver
 import com.aleksagn.playlistmaker.util.debounce
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -48,6 +56,22 @@ class PlayerFragment : Fragment() {
     private val viewModel: PlayerViewModel by viewModel()
     private val gson: Gson by inject()
 
+    private val connectivityBroadcastReceiver = ConnectivityBroadcastReceiver()
+    private var isServiceConnected: Boolean = false
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as AudioPlayerService.AudioPlayerServiceBinder
+            isServiceConnected = true
+            viewModel.setAudioPlayerControl(binder.getService())
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isServiceConnected = false
+            viewModel.removeAudioPlayerControl()
+        }
+    }
+
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
 
@@ -57,6 +81,7 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        unbindAudioPlayerService()
         super.onDestroyView()
         _binding = null
     }
@@ -67,6 +92,8 @@ class PlayerFragment : Fragment() {
         val jsonTrack = requireArguments().getString(ARGS_TRACK_ID).toString()
 
         track = gson.fromJson(jsonTrack, Track::class.java)
+
+        bindAudioPlayerService()
 
         viewModel.preparePlayer(track)
 
@@ -169,9 +196,44 @@ class PlayerFragment : Fragment() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        if (isServiceConnected) {
+            viewModel.showNotification()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isServiceConnected) {
+            viewModel.hideNotification()
+        }
+        ContextCompat.registerReceiver(
+            requireContext(),
+            connectivityBroadcastReceiver,
+            IntentFilter(ConnectivityBroadcastReceiver.ACTION),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
     override fun onPause() {
         super.onPause()
-        viewModel.onPause()
+        viewModel.showNotification()
+        requireContext().unregisterReceiver(connectivityBroadcastReceiver)
+    }
+
+    private fun bindAudioPlayerService() {
+        val intent = Intent(requireContext(), AudioPlayerService::class.java).apply {
+            putExtra("preview_url", track.previewUrl)
+            putExtra("artist_name", track.artistName)
+            putExtra("track_name", track.trackName)
+        }
+
+        requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun unbindAudioPlayerService() {
+        requireContext().unbindService(serviceConnection)
     }
 
     fun showContent(playlists: List<Playlist>) {
