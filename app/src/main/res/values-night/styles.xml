@@ -165,7 +165,7 @@
     <style name="EmptySearchIcon">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:src">@drawable/ic_empty_search_dark</item>
+        <item name="android:src">@drawable/ic_empty_search</item>
     </style>
 
     <style name="SearchText">
@@ -184,7 +184,7 @@
     <style name="NetErrorIcon">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:src">@drawable/ic_net_error_dark</item>
+        <item name="android:src">@drawable/ic_net_error</item>
     </style>
 
     <style name="UpdateButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">

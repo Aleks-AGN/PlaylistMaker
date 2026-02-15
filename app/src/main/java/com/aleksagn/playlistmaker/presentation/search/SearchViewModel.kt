@@ -10,6 +10,9 @@ import com.aleksagn.playlistmaker.domain.api.SearchHistoryInteractor
 import com.aleksagn.playlistmaker.domain.api.TracksInteractor
 import com.aleksagn.playlistmaker.domain.models.Track
 import com.aleksagn.playlistmaker.util.debounce
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -22,11 +25,20 @@ class SearchViewModel(
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
-    private val stateLiveData = MutableLiveData<SearchState>()
-    fun observeState(): LiveData<SearchState> = stateLiveData
+//    private val stateLiveData = MutableLiveData<SearchState>()
+//    fun observeState(): LiveData<SearchState> = stateLiveData
 
-    private val showToast = SingleLiveEvent<String?>()
-    fun observeShowToast(): LiveData<String?> = showToast
+    private val _state = MutableStateFlow<SearchState>(SearchState.Empty(""))
+    val state: StateFlow<SearchState> = _state.asStateFlow()
+
+    private val _query = MutableStateFlow<String>("")
+    val query: StateFlow<String> = _query.asStateFlow()
+
+//    private val showToast = SingleLiveEvent<String?>()
+//    fun observeShowToast(): LiveData<String?> = showToast
+
+    val toastMessage = MutableStateFlow<String?>(null)
+    fun clearToast() { toastMessage.value = null }
 
     private var latestSearchText: String? = null
 
@@ -35,20 +47,33 @@ class SearchViewModel(
             searchHistoryInteractor
                 .getTracksHistory()
                 .collect { tracks ->
-                    stateLiveData.value = SearchState.History(tracks)
+//                    stateLiveData.value = SearchState.History(tracks)
+                    _state.value = SearchState.History(tracks)
+                }
+        }
+    }
+
+    fun getTracksHistory() {
+        viewModelScope.launch {
+            searchHistoryInteractor
+                .getTracksHistory()
+                .collect { tracks ->
+//                    stateLiveData.value = SearchState.History(tracks)
+                    _state.value = SearchState.History(tracks)
                 }
         }
     }
 
     fun saveTrackToHistory(track: Track) {
         searchHistoryInteractor.saveTrackToHistory(track)
-        viewModelScope.launch {
-            searchHistoryInteractor
-                .getTracksHistory()
-                .collect { tracks ->
-                    stateLiveData.value = SearchState.History(tracks)
-                }
-        }
+//        viewModelScope.launch {
+//            searchHistoryInteractor
+//                .getTracksHistory()
+//                .collect { tracks ->
+////                    stateLiveData.value = SearchState.History(tracks)
+//                    _state.value = SearchState.History(tracks)
+//                }
+//        }
     }
 
     fun clearTracksHistory() {
@@ -57,12 +82,14 @@ class SearchViewModel(
             searchHistoryInteractor
                 .getTracksHistory()
                 .collect { tracks ->
-                    stateLiveData.value = SearchState.History(tracks)
+//                    stateLiveData.value = SearchState.History(tracks)
+                    _state.value = SearchState.History(tracks)
                 }
         }
     }
 
     fun searchQuick(changedText: String) {
+        _query.value = changedText
         this.latestSearchText = changedText
         searchRequest(changedText)
     }
@@ -72,6 +99,7 @@ class SearchViewModel(
     }
 
     fun searchDebounce(changedText: String) {
+        _query.value = changedText
         if (latestSearchText != changedText) {
             latestSearchText = changedText
             trackSearchDebounce(changedText)
@@ -101,8 +129,9 @@ class SearchViewModel(
 
         when {
             errorMessage != null -> {
-                renderState(SearchState.Error(errorMessage = context.getString(R.string.net_error)))
-                showToast.postValue(errorMessage)
+                renderState(SearchState.Error(errorMessage = context.getString(R.string.net_connection_error)))
+//                showToast.postValue(errorMessage)
+                toastMessage.value = errorMessage
             }
 
             tracks.isEmpty() -> {
@@ -116,6 +145,7 @@ class SearchViewModel(
     }
 
     private fun renderState(state: SearchState) {
-        stateLiveData.postValue(state)
+//        stateLiveData.postValue(state)
+        _state.value = state
     }
 }

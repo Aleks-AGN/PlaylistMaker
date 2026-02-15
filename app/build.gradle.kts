@@ -1,12 +1,15 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("kotlin-kapt")
+    alias(libs.plugins.compose.compiler)
+    id("com.google.devtools.ksp")
 }
 
 android {
     namespace = "com.aleksagn.playlistmaker"
-    compileSdk = 34
+    compileSdk {
+        version = release(35)
+    }
 
     defaultConfig {
         applicationId = "com.aleksagn.playlistmaker"
@@ -26,18 +29,29 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        compose = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
 }
 
 dependencies {
-
+    implementation(libs.androidx.ui.text)
+    implementation(libs.androidx.runtime)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.foundation)
+    implementation(libs.androidx.runtime.livedata)
+    val composeBom = platform("androidx.compose:compose-bom:2024.09.00")
+    implementation(composeBom)
     implementation(libs.gson)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
@@ -57,8 +71,19 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    kapt(libs.androidx.room.compiler)
+    implementation("androidx.compose.ui:ui:1.8.0")
+    implementation("androidx.activity:activity-compose:1.10.1")
+    implementation("androidx.compose.material:material:1.8.0")
+    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material3.adaptive:adaptive")
+    implementation("androidx.compose.material3:material3")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    debugImplementation(libs.androidx.ui.tooling)
+
+    ksp(libs.androidx.room.compiler)
     annotationProcessor(libs.compiler)
+    debugImplementation("androidx.compose.ui:ui-tooling:1.8.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
