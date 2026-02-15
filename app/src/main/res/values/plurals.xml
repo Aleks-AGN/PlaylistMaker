@@ -3,18 +3,20 @@
 
     <plurals
         name="plural_tracks">
-        <item quantity = "zero">@string/many_tracks</item>
-        <item quantity = "one">@string/one_track</item>
-        <item quantity = "few">@string/few_tracks</item>
-        <item quantity = "many">@string/many_tracks</item>
+        <item quantity="zero">@string/many_tracks</item>
+        <item quantity="one">@string/one_track</item>
+        <item quantity="few">@string/few_tracks</item>
+        <item quantity="many">@string/many_tracks</item>
+        <item quantity="other">@string/many_tracks</item>
     </plurals>
 
     <plurals
         name="plural_minutes">
-        <item quantity = "zero">@string/many_minutes</item>
-        <item quantity = "one">@string/one_minute</item>
-        <item quantity ="few">@string/few_minutes</item>
-        <item quantity ="many">@string/many_minutes</item>
+        <item quantity="zero">@string/many_minutes</item>
+        <item quantity="one">@string/one_minute</item>
+        <item quantity="few">@string/few_minutes</item>
+        <item quantity="many">@string/many_minutes</item>
+        <item quantity="other">@string/many_minutes</item>
     </plurals>
 
 </resources>

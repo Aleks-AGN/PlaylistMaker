@@ -8,6 +8,8 @@ import com.aleksagn.playlistmaker.R
 import com.aleksagn.playlistmaker.domain.api.SharingInteractor
 import com.aleksagn.playlistmaker.domain.api.ThemeSettingInteractor
 import com.aleksagn.playlistmaker.domain.models.EmailData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsViewModel(
     private val themeSettingInteractor: ThemeSettingInteractor,
@@ -15,11 +17,19 @@ class SettingsViewModel(
     private val context: Context
 ) : ViewModel() {
 
-    private val themeModeLiveData = MutableLiveData<Boolean>(themeSettingInteractor.getThemeSetting())
-    fun observeThemeMode(): LiveData<Boolean> = themeModeLiveData
+//    private val themeModeLiveData = MutableLiveData<Boolean>(themeSettingInteractor.getThemeSetting())
+//    fun observeThemeMode(): LiveData<Boolean> = themeModeLiveData
+
+    private val _themeState = MutableStateFlow<Boolean>(false)
+    val themeState = _themeState.asStateFlow()
+
+    init {
+        _themeState.value = themeSettingInteractor.getThemeSetting()
+    }
 
     fun switchTheme(isChecked: Boolean) {
-        themeModeLiveData.postValue(isChecked)
+//        themeModeLiveData.postValue(isChecked)
+        _themeState.value = isChecked
         themeSettingInteractor.switchTheme(isChecked)
     }
 
